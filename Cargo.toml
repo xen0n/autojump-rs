@@ -1,0 +1,19 @@
+[package]
+name = "autojump-rs"
+version = "0.1.0"
+authors = ["Wang Xuerui <git@xen0n.name>"]
+
+
+[workspace]
+members = ["src/autojump-data", "src/autojump-match", "src/autojump-utils"]
+
+
+[dependencies]
+autojump-data = { path = "src/autojump-data", version = "0.1.0" }
+autojump-match = { path = "src/autojump-match", version = "0.1.0" }
+autojump-utils = { path = "src/autojump-utils", version = "0.1.0" }
+
+
+[[bin]]
+name = "autojump"
+path = "src/autojump-cli/main.rs"

@@ -1,0 +1,21 @@
+[root]
+name = "autojump-utils"
+version = "0.1.0"
+
+[[package]]
+name = "autojump-data"
+version = "0.1.0"
+
+[[package]]
+name = "autojump-match"
+version = "0.1.0"
+
+[[package]]
+name = "autojump-rs"
+version = "0.1.0"
+dependencies = [
+ "autojump-data 0.1.0",
+ "autojump-match 0.1.0",
+ "autojump-utils 0.1.0",
+]
+

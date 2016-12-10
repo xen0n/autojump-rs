@@ -1,0 +1,10 @@
+[package]
+name = "autojump-data"
+version = "0.1.0"
+authors = ["Wang Xuerui <git@xen0n.name>"]
+
+[dependencies]
+
+
+[lib]
+name = "autojump_data"
