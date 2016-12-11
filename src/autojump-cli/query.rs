@@ -36,7 +36,8 @@ fn do_query(config: &Config,
     // requested.
     let index;
     let needles = if tab.index.is_some() {
-        index = tab.index.unwrap();
+        // index is 1-based on the command line!
+        index = tab.index.unwrap() - 1;
         vec![tab.needle.unwrap()]
     } else {
         index = 0;
