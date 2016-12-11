@@ -1,8 +1,9 @@
 use std::cmp;
+use std::fmt;
 use std::path;
 
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Entry {
     pub path: path::PathBuf,
     pub weight: f64,
@@ -15,6 +16,13 @@ impl Entry {
             path: path.into(),
             weight: weight,
         }
+    }
+}
+
+
+impl fmt::Display for Entry {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:.1}:\t{}", self.weight, self.path.to_string_lossy())
     }
 }
 

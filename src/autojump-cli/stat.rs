@@ -19,7 +19,7 @@ pub fn print_stat(config: &Config) {
     };
     let mut weight_sum = 0.0f64;
     for ref entry in &entries {
-        println!("{:.1}:\t{}", entry.weight, entry.path.to_string_lossy());
+        println!("{}", entry);
         // NOTE: This isn't exactly accurate due to floating-point nature,
         // but since this is only an estimate let's get over it!
         weight_sum += entry.weight;
