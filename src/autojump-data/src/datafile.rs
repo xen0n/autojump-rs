@@ -16,6 +16,16 @@ pub struct Entry {
 const BACKUP_THRESHOLD: usize = 24 * 60 * 60;  // 1 d
 
 
+impl Entry {
+    pub fn new<P>(path: P, weight: f64) -> Entry where P: Into<path::PathBuf> {
+        Entry {
+            path: path.into(),
+            weight: weight,
+        }
+    }
+}
+
+
 #[cfg(target_os = "macos")]
 fn migrate_osx_xdg_data(config: &Config) -> io::Result<()> {
     let xdg_aj_home = autojump::xdg_home_hardcoded();
@@ -48,10 +58,7 @@ fn load_line(line: &str) -> Option<Entry> {
     let path = path::PathBuf::from(parts[1]);
     let weight = parts[0].parse::<f64>();
     if let Ok(weight) = weight {
-        Some(Entry {
-            path: path,
-            weight: weight,
-        })
+        Some(Entry::new(path, weight))
     } else {
         None
     }
