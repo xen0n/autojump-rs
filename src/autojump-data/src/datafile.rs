@@ -4,26 +4,10 @@ use std::io::BufRead;
 use std::path;
 
 use autojump::Config;
-
-
-#[derive(Debug)]
-pub struct Entry {
-    pub path: path::PathBuf,
-    pub weight: f64,
-}
+use super::entry::Entry;
 
 
 const BACKUP_THRESHOLD: usize = 24 * 60 * 60;  // 1 d
-
-
-impl Entry {
-    pub fn new<P>(path: P, weight: f64) -> Entry where P: Into<path::PathBuf> {
-        Entry {
-            path: path.into(),
-            weight: weight,
-        }
-    }
-}
 
 
 #[cfg(target_os = "macos")]
