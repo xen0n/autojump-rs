@@ -6,10 +6,12 @@ extern crate docopt;
 
 extern crate autojump;
 extern crate autojump_data;
+extern crate autojump_match;
 extern crate autojump_utils;
 
 mod manip;
 mod purge;
+mod query;
 mod stat;
 
 
@@ -111,8 +113,5 @@ fn main() {
         return;
     }
 
-    // TODO
-    println!("{:?}", args);
-    let entries = autojump_data::load(&config);
-    println!("entries = {:?}", entries);
+    query::query(&config, args.arg_dir);
 }
