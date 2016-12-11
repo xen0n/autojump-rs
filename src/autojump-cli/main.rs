@@ -6,6 +6,7 @@ extern crate docopt;
 
 extern crate autojump;
 extern crate autojump_data;
+extern crate autojump_utils;
 
 mod stat;
 
@@ -54,7 +55,26 @@ Please see autojump(1) man pages for full documentation.
 );
 
 
+#[cfg(not(windows))]
+fn check_if_sourced() {
+    if !autojump_utils::is_autojump_sourced() {
+        println!("Please source the correct autojump file in your shell's");
+        println!("startup file. For more information, please reinstall autojump");
+        println!("and read the post installation instructions.");
+        std::process::exit(1);
+    }
+}
+
+
+#[cfg(windows)]
+fn check_if_sourced() {
+    // no-op on Windows
+}
+
+
 fn main() {
+    check_if_sourced();
+
     let args: Args = Args::docopt().decode().unwrap_or_else(|e| e.exit());
     let config = autojump::Config::defaults();
 
