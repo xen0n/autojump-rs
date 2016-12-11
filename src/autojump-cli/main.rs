@@ -8,6 +8,7 @@ extern crate autojump;
 extern crate autojump_data;
 extern crate autojump_utils;
 
+mod purge;
 mod stat;
 
 
@@ -81,6 +82,10 @@ fn main() {
     // Process arguments.
     // All arguments are mutually exclusive, so we just check for presence
     // one-by-one.
+    if args.flag_purge {
+        purge::purge(&config);
+        return;
+    }
     if args.flag_stat {
         stat::print_stat(&config);
         return;
