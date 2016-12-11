@@ -5,6 +5,7 @@ use autojump::Config;
 use autojump_data;
 use autojump_match::Matcher;
 use autojump_utils;
+use autojump_utils::TabEntryInfo;
 
 
 struct QueryConfig<'a> {
@@ -18,6 +19,37 @@ struct QueryConfig<'a> {
 enum Query<'a> {
     Execute(QueryConfig<'a>),
     EarlyResult(path::PathBuf),
+}
+
+
+pub fn complete(config: &Config, needles: Vec<String>) {
+    // Override needles to only consider the first entry (if present).
+    let needle = if needles.is_empty() {
+        ""
+    } else {
+        needles[0].as_str()
+    };
+    let needles = vec![needle];
+
+    match prepare_query(&needles, false, 9) {
+        Query::Execute(query) => {
+            let result = do_query(config, query);
+            // Convert to `&str` for tab entry info creation.
+            let result: Vec<_> = result
+                .into_iter()
+                .map(|p| p.to_string_lossy().into_owned())
+                .collect();
+            let strs: Vec<_> = result.iter().map(|p| p.as_str()).collect();
+            let tab_entries = TabEntryInfo::from_matches(needle, &strs);
+            // Output the tab completion menu.
+            for tab_entry in tab_entries.into_iter() {
+                println!("{}", tab_entry);
+            }
+        }
+        Query::EarlyResult(path) => {
+            println!("{}", path.to_string_lossy());
+        }
+    }
 }
 
 

@@ -24,7 +24,7 @@ Automatically jump to directory passed as an argument.
 
 Usage:
   autojump [<dir>...]
-  autojump --complete
+  autojump --complete [<dir>...]
   autojump --purge
   autojump (-a <dir> | --add <dir>)
   autojump (-i <weight> | --increase <weight>)
@@ -88,6 +88,10 @@ fn main() {
     // Process arguments.
     // All arguments are mutually exclusive, so we just check for presence
     // one-by-one.
+    if args.flag_complete {
+        query::complete(&config, args.arg_dir);
+        return;
+    }
     if args.flag_add.is_some() {
         manip::add(&config, args.flag_add.unwrap());
         return;
