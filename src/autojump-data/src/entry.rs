@@ -27,6 +27,13 @@ impl fmt::Display for Entry {
 }
 
 
+impl AsRef<path::Path> for Entry {
+    fn as_ref(&self) -> &path::Path {
+        self.path.as_path()
+    }
+}
+
+
 impl PartialOrd for Entry {
     fn partial_cmp(&self, other: &Entry) -> Option<cmp::Ordering> {
         self.weight.partial_cmp(&other.weight)
