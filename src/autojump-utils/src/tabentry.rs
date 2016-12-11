@@ -54,8 +54,17 @@ fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEnt
                 // Pass-through the path part.
                 path = Some(path_s);
             } else {
-                // Only the index part is present.
-                parse_index(remaining);
+                // Handle "foo__" as if the missing index is 1.
+                // Put the logic here for better locality (the original impl has
+                // it in the driver script).
+                if remaining.len() == 0 {
+                    // fxxk the borrow checker
+                    // index = Some(1);
+                    parse_index("1");
+                } else {
+                    // Only the index part is present.
+                    parse_index(remaining);
+                }
             }
         } else {
             // No separators at all, the original implementation returned all
@@ -99,7 +108,7 @@ mod tests {
     #[test]
     fn test_tab_entry_info_parse_malformed() {
         assert_tab_entry_info!("a", None, None, None);
-        assert_tab_entry_info!("a__", Some("a"), None, None);
+        assert_tab_entry_info!("a__", Some("a"), Some(1), None);
         assert_tab_entry_info!("a__x", Some("a"), None, None);
         assert_tab_entry_info!("a____b", Some("a"), None, Some("b"));
     }
