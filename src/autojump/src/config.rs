@@ -3,8 +3,8 @@ use std::path;
 
 
 pub struct Config {
-    data_path: path::PathBuf,
-    backup_path: path::PathBuf,
+    pub data_path: path::PathBuf,
+    pub backup_path: path::PathBuf,
 }
 
 
@@ -18,17 +18,24 @@ fn home_dir() -> path::PathBuf {
 }
 
 
+#[cfg(unix)]
+pub fn xdg_home_hardcoded() -> path::PathBuf {
+    // ~/.local/share/autojump
+    let mut tmp = home_dir();
+    tmp.push(".local");
+    tmp.push("share");
+    tmp.push("autojump");
+    tmp
+}
+
+
 #[cfg(target_os = "linux")]
 fn data_home() -> path::PathBuf {
     // Use $XDG_DATA_HOME if defined, ~/.local/share/autojump otherwise.
     if let Some(home_s) = env::var_os("XDG_DATA_HOME") {
         path::PathBuf::from(home_s)
     } else {
-        let mut tmp = home_dir();
-        tmp.push(".local");
-        tmp.push("share");
-        tmp.push("autojump");
-        tmp
+        xdg_home_hardcoded()
     }
 }
 
@@ -56,6 +63,11 @@ fn data_home() -> path::PathBuf {
 impl Config {
     pub fn defaults() -> Config {
         let data_home = data_home();
+        Config::from_prefix(&data_home)
+    }
+
+    pub fn from_prefix(data_home: &path::Path) -> Config {
+        let data_home = data_home.to_path_buf();
         let data_path_join = |s| {
             let mut tmp = data_home.clone();
             tmp.push(s);

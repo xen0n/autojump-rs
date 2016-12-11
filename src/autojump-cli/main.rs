@@ -4,6 +4,9 @@
 extern crate rustc_serialize;
 extern crate docopt;
 
+extern crate autojump;
+extern crate autojump_data;
+
 
 docopt!(Args derive Debug, "
 Automatically jump to directory passed as an argument.
@@ -52,4 +55,8 @@ Please see autojump(1) man pages for full documentation.
 fn main() {
     let args: Args = Args::docopt().decode().unwrap_or_else(|e| e.exit());
     println!("{:?}", args);
+
+    let config = autojump::Config::defaults();
+    let entries = autojump_data::load(&config);
+    println!("entries = {:?}", entries);
 }

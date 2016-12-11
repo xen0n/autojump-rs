@@ -17,6 +17,9 @@ version = "0.1.0"
 [[package]]
 name = "autojump-data"
 version = "0.1.0"
+dependencies = [
+ "autojump 0.1.0",
+]
 
 [[package]]
 name = "autojump-match"
