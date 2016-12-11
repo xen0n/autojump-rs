@@ -6,6 +6,8 @@ authors = ["Wang Xuerui <git@xen0n.name>"]
 [dependencies]
 autojump = { path = "../autojump", version = "0.1.0" }
 
+atomicwrites = "0.0.14"
+
 
 [lib]
 name = "autojump_data"

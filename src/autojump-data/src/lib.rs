@@ -1,3 +1,5 @@
+extern crate atomicwrites;
+
 extern crate autojump;
 
 mod datafile;

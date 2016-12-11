@@ -1,13 +1,16 @@
 use std::fs;
 use std::io;
-use std::io::BufRead;
+use std::io::{BufRead, Write};
 use std::path;
+use std::time;
+
+use atomicwrites;
 
 use autojump::Config;
 use super::entry::Entry;
 
 
-const BACKUP_THRESHOLD: usize = 24 * 60 * 60;  // 1 d
+const BACKUP_THRESHOLD: u64 = 24 * 60 * 60;  // 1 d
 
 
 #[cfg(target_os = "macos")]
@@ -92,4 +95,69 @@ fn load_backup(config: &Config) -> Vec<Entry> {
     } else {
         vec![]
     }
+}
+
+
+fn save_to(file: &fs::File, data: &[Entry]) -> io::Result<()> {
+    let mut writer = io::BufWriter::new(file);
+    for entry in data.iter() {
+        writeln!(&mut writer, "{}\t{}", entry.weight, entry.path.to_string_lossy())?;
+    }
+
+    Ok(())
+}
+
+
+fn maybe_create_data_dir(config: &Config) -> io::Result<()> {
+    if !config.prefix.exists() {
+        fs::create_dir_all(&config.prefix)
+    } else {
+        Ok(())
+    }
+}
+
+
+fn need_backup(config: &Config) -> io::Result<bool> {
+    if config.backup_path.exists() {
+        let now = time::SystemTime::now();
+
+        let metadata = config.backup_path.metadata()?;
+        let mtime = metadata.modified()?;
+
+        match now.duration_since(mtime) {
+            Ok(duration) => {
+                Ok(duration.as_secs() > BACKUP_THRESHOLD)
+            }
+            Err(_) => {
+                // Clock skew: mtime is in the future!
+                // TODO: print warning
+                // In the original impl a backup is not forced, so we mirror
+                // that decision for now.
+                Ok(false)
+            }
+        }
+    } else {
+        Ok(true)
+    }
+}
+
+
+fn maybe_backup(config: &Config) -> io::Result<()> {
+    if need_backup(config)? {
+        fs::copy(&config.data_path, &config.backup_path)?;
+    }
+
+    Ok(())
+}
+
+
+pub fn save(config: &Config, data: &[Entry]) -> io::Result<()> {
+    maybe_create_data_dir(config)?;
+
+    let af = atomicwrites::AtomicFile::new(&config.data_path, atomicwrites::AllowOverwrite);
+    af.write(|f| save_to(f, data))?;
+
+    maybe_backup(config)?;
+
+    Ok(())
 }
