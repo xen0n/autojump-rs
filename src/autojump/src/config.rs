@@ -3,6 +3,7 @@ use std::path;
 
 
 pub struct Config {
+    pub prefix: path::PathBuf,
     pub data_path: path::PathBuf,
     pub backup_path: path::PathBuf,
 }
@@ -68,15 +69,22 @@ impl Config {
 
     pub fn from_prefix(data_home: &path::Path) -> Config {
         let data_home = data_home.to_path_buf();
-        let data_path_join = |s| {
-            let mut tmp = data_home.clone();
-            tmp.push(s);
-            tmp
-        };
-        let data_path = data_path_join("autojump.txt");
-        let backup_path = data_path_join("autojump.txt.bak");
+        let data_path;
+        let backup_path;
+
+        // for pleasing the borrow checker
+        {
+            let data_path_join = |s| {
+                let mut tmp = data_home.clone();
+                tmp.push(s);
+                tmp
+            };
+            data_path = data_path_join("autojump.txt");
+            backup_path = data_path_join("autojump.txt.bak");
+        }
 
         Config {
+            prefix: data_home,
             data_path: data_path,
             backup_path: backup_path,
         }
