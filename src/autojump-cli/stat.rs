@@ -3,8 +3,11 @@ use autojump_data;
 
 
 pub fn print_stat(config: &Config) {
-    // TODO: sort by weight
-    let entries = autojump_data::load(config);
+    let entries = {
+        let mut tmp = autojump_data::load(config);
+        tmp.sort();
+        tmp
+    };
     let mut weight_sum = 0.0f64;
     for ref entry in &entries {
         println!("{:.1}:\t{}", entry.weight, entry.path.to_string_lossy());
