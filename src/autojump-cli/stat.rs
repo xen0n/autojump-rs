@@ -17,7 +17,7 @@ pub fn print_stat(config: &Config) {
     }
 
     println!("________________________________________\n");
-    println!("{}:\t total weight", weight_sum);
+    println!("{:.0}:\t total weight", weight_sum.floor());
     println!("{}:\t number of entries", entries.len());
     // TODO: current directory weight
 
