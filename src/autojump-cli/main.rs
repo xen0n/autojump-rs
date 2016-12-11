@@ -56,7 +56,6 @@ Please see autojump(1) man pages for full documentation.
     flag_increase: Option<isize>,
     flag_decrease: Option<isize>,
     flag_stat: bool,
-    flag_help: bool,
     flag_version: bool,
 );
 
