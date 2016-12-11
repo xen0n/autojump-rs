@@ -1,3 +1,4 @@
+use std::cmp;
 use std::path;
 
 
@@ -14,5 +15,31 @@ impl Entry {
             path: path.into(),
             weight: weight,
         }
+    }
+}
+
+
+impl PartialOrd for Entry {
+    fn partial_cmp(&self, other: &Entry) -> Option<cmp::Ordering> {
+        self.weight.partial_cmp(&other.weight)
+    }
+}
+
+
+impl PartialEq for Entry {
+    fn eq(&self, other: &Entry) -> bool {
+        self.weight == other.weight
+    }
+}
+
+
+impl Eq for Entry {
+}
+
+
+impl Ord for Entry {
+    fn cmp(&self, other: &Entry) -> cmp::Ordering {
+        // We know that NaN's don't exist in our use case, so just unwrap it.
+        self.partial_cmp(other).unwrap()
     }
 }
