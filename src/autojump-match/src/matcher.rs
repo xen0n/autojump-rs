@@ -68,8 +68,11 @@ impl Matcher {
             where P: AsRef<path::Path> {
         let mut result = vec![];
         result.extend(filter_path_with_re(haystack, &self.re_consecutive));
-        // TODO: fuzzy matcher
-        result.extend(filter_path_with_re(haystack, &self.re_anywhere));
+        // Only try next mechanism if current one fails to find any match.
+        if result.len() == 0 {
+            // TODO: fuzzy matcher
+            result.extend(filter_path_with_re(haystack, &self.re_anywhere));
+        }
         result
     }
 }
