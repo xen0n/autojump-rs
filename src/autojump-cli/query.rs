@@ -11,6 +11,7 @@ struct QueryConfig<'a> {
     needles: Vec<&'a str>,
     check_existence: bool,
     index: usize,
+    count: usize,
 }
 
 
@@ -22,8 +23,8 @@ enum Query<'a> {
 
 pub fn query(config: &Config, needles: Vec<String>) {
     let needles: Vec<_> = needles.iter().map(|s| s.as_str()).collect();
-    let result = match prepare_query(&needles, true) {
-        Query::Execute(query_cfg) => do_query(config, query_cfg),
+    let result = match prepare_query(&needles, true, 1) {
+        Query::Execute(query) => do_query(config, query).pop().unwrap(),
         Query::EarlyResult(path) => path,
     };
     println!("{}", result.to_string_lossy());
@@ -31,7 +32,8 @@ pub fn query(config: &Config, needles: Vec<String>) {
 
 
 fn prepare_query<'a>(needles: &'a [&'a str],
-                     check_existence: bool) -> Query<'a> {
+                     check_existence: bool,
+                     count: usize) -> Query<'a> {
     let needles = if needles.is_empty() {
         vec![""]
     } else {
@@ -63,14 +65,16 @@ fn prepare_query<'a>(needles: &'a [&'a str],
         needles: needles,
         check_existence: check_existence,
         index: index,
+        count: count,
     })
 }
 
 
-fn do_query<'a>(config: &Config, query: QueryConfig<'a>) -> path::PathBuf {
+fn do_query<'a>(config: &Config, query: QueryConfig<'a>) -> Vec<path::PathBuf> {
     let needles = query.needles;
     let check_existence = query.check_existence;
     let index = query.index;
+    let count = query.count;
 
     let entries = {
         let mut tmp = autojump_data::load(config);
@@ -105,10 +109,12 @@ fn do_query<'a>(config: &Config, query: QueryConfig<'a>) -> path::PathBuf {
         })
         .collect();
 
-    if result.len() < index + 1 {
-        // Index is out-of-bounds, return something for shell.
-        path::Path::new(".").to_path_buf()
-    } else {
-        result[index].to_path_buf()
+    if count == 1 {
+        if result.len() < index + 1 {
+            // Index is out-of-bounds, return something for shell.
+            return vec![path::Path::new(".").to_path_buf()];
+        }
     }
+
+    result.iter().skip(index).take(count).map(|p| p.to_path_buf()).collect()
 }
