@@ -7,6 +7,8 @@ extern crate docopt;
 extern crate autojump;
 extern crate autojump_data;
 
+mod stat;
+
 
 docopt!(Args derive Debug, "
 Automatically jump to directory passed as an argument.
@@ -54,9 +56,18 @@ Please see autojump(1) man pages for full documentation.
 
 fn main() {
     let args: Args = Args::docopt().decode().unwrap_or_else(|e| e.exit());
-    println!("{:?}", args);
-
     let config = autojump::Config::defaults();
+
+    // Process arguments.
+    // All arguments are mutually exclusive, so we just check for presence
+    // one-by-one.
+    if args.flag_stat {
+        stat::print_stat(&config);
+        return;
+    }
+
+    // TODO
+    println!("{:?}", args);
     let entries = autojump_data::load(&config);
     println!("entries = {:?}", entries);
 }
