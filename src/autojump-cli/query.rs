@@ -33,6 +33,7 @@ pub fn complete(config: &Config, needles: Vec<String>) {
 
     match prepare_query(&needles, false, 9) {
         Query::Execute(query) => {
+            let real_needle = query.needles[0].clone();
             let result = do_query(config, query);
             // Convert to `&str` for tab entry info creation.
             let result: Vec<_> = result
@@ -40,8 +41,13 @@ pub fn complete(config: &Config, needles: Vec<String>) {
                 .map(|p| p.to_string_lossy().into_owned())
                 .collect();
             let strs: Vec<_> = result.iter().map(|p| p.as_str()).collect();
-            let tab_entries = TabEntryInfo::from_matches(needle, &strs);
-            // Output the tab completion menu.
+            // Directly print out the directory if it's the only entry.
+            if strs.len() == 1 {
+                println!("{}", strs[0]);
+                return;
+            }
+            // Output the tab completion menu
+            let tab_entries = TabEntryInfo::from_matches(real_needle, &strs);
             for tab_entry in tab_entries.into_iter() {
                 println!("{}", tab_entry);
             }
@@ -66,6 +72,7 @@ pub fn query(config: &Config, needles: Vec<String>) {
 fn prepare_query<'a>(needles: &'a [&'a str],
                      check_existence: bool,
                      count: usize) -> Query<'a> {
+    let mut count = count;
     let needles = if needles.is_empty() {
         vec![""]
     } else {
@@ -85,6 +92,12 @@ fn prepare_query<'a>(needles: &'a [&'a str],
     // requested.
     let index;
     let needles = if tab.index.is_some() {
+        // process "foo__" and "foo__1" differently
+        if tab.index_explicit {
+            // explicit match requested, override count
+            count = 1;
+        }
+
         // index is 1-based on the command line!
         index = tab.index.unwrap() - 1;
         vec![tab.needle.unwrap()]
