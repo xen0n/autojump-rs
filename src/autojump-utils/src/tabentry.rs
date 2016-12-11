@@ -1,8 +1,48 @@
+use std::fmt;
+
+
 #[derive(PartialEq, Eq, Debug)]
 pub struct TabEntryInfo<'a> {
     pub needle: Option<&'a str>,
     pub index: Option<usize>,
     pub path: Option<&'a str>,
+}
+
+
+impl<'a> fmt::Display for TabEntryInfo<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.needle.is_some() {
+            write!(f, "{}", self.needle.unwrap())?;
+        }
+        if self.index.is_some() {
+            write!(f, "__{}", self.index.unwrap())?;
+        }
+        if self.path.is_some() {
+            write!(f, "__{}", self.path.unwrap())?;
+        }
+        Ok(())
+    }
+}
+
+
+impl<'a> TabEntryInfo<'a> {
+    fn new(needle: &'a str, index: usize, path: &'a str) -> TabEntryInfo<'a> {
+        TabEntryInfo {
+            needle: Some(needle),
+            index: Some(index),
+            path: Some(path),
+        }
+    }
+
+    pub fn from_matches(
+            needle: &'a str,
+            matches: &'a [&'a str]) -> Vec<TabEntryInfo<'a>> {
+        matches
+            .iter()
+            .enumerate()
+            .map(|(i, p)| TabEntryInfo::new(needle, i + 1, p))
+            .collect()
+    }
 }
 
 
