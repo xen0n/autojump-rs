@@ -12,6 +12,10 @@ mod purge;
 mod stat;
 
 
+const VERSION_TRACK: &'static str = "22.5.0";
+const VERSION: &'static str = "0.1";
+
+
 docopt!(Args derive Debug, "
 Automatically jump to directory passed as an argument.
 
@@ -88,6 +92,10 @@ fn main() {
     }
     if args.flag_stat {
         stat::print_stat(&config);
+        return;
+    }
+    if args.flag_version {
+        println!("autojump v{} (autojump-rs v{})", VERSION_TRACK, VERSION);
         return;
     }
 
