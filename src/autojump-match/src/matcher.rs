@@ -24,7 +24,27 @@ fn filter_path_with_re<'p, P>(l: &'p [P], re: &regex::Regex) -> Vec<&'p path::Pa
 }
 
 
+/// Returns whether matches should ignore case based on uppercase letter's
+/// presence in the needles.
+fn detect_smartcase(needles: &[&str]) -> bool {
+    for s in needles {
+        for ch in s.chars() {
+            if ch.is_uppercase() {
+                return false;
+            }
+        }
+    }
+
+    true
+}
+
+
 impl Matcher {
+    pub fn new_smartcase(needles: Vec<&str>) -> Matcher {
+        let ignore_case = detect_smartcase(&needles);
+        Matcher::new(needles, ignore_case)
+    }
+
     pub fn new(needles: Vec<&str>, ignore_case: bool) -> Matcher {
         let re_anywhere = re_based::prepare_regex(
             &needles,
@@ -58,6 +78,23 @@ impl Matcher {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+
+    #[test]
+    fn test_smartcase() {
+        macro_rules! a {
+            ($needles: tt, $y: expr) => {
+                assert_eq!(detect_smartcase(&vec! $needles), $y);
+            };
+        }
+
+        a!([], true);
+        a!([""], true);
+        a!(["foo"], true);
+        a!(["foo", "bar"], true);
+        a!(["测试", "bar"], true);
+        a!(["foo", "bar", "测试", "baZ"], false);
+    }
 
 
     #[test]
