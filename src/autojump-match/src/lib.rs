@@ -1,6 +1,10 @@
+extern crate regex;
+
+mod matcher;
+mod re_based;
+
+pub use matcher::*;
+
+
 #[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-    }
-}
+mod tests;
