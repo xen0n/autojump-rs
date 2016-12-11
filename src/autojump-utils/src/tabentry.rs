@@ -5,6 +5,7 @@ use std::fmt;
 pub struct TabEntryInfo<'a> {
     pub needle: Option<&'a str>,
     pub index: Option<usize>,
+    pub index_explicit: bool,
     pub path: Option<&'a str>,
 }
 
@@ -30,6 +31,7 @@ impl<'a> TabEntryInfo<'a> {
         TabEntryInfo {
             needle: Some(needle),
             index: Some(index),
+            index_explicit: true,
             path: Some(path),
         }
     }
@@ -59,6 +61,7 @@ pub fn get_tab_entry_info<'a>(entry: &'a str) -> TabEntryInfo<'a> {
 fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEntryInfo<'a> {
     let mut needle = None;
     let mut index = None;
+    let mut index_explicit = false;
     let mut path = None;
 
     // extra scope needed to make `parse_index` and final return play well
@@ -67,10 +70,11 @@ fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEnt
         // "0" => Some(0)
         // "x" => None
         // "01" => Some(0) (first digit)
-        let mut parse_index = |index_s: &str| {
+        let mut parse_index = |index_s: &str, explicit: bool| {
             if let Some(ch) = index_s.chars().next() {
                 if let Some(index_u32) = ch.to_digit(10) {
                     index = Some(index_u32 as usize);
+                    index_explicit = explicit;
                 }
             }
         };
@@ -89,7 +93,7 @@ fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEnt
                 let (_, path_s) = path_s.split_at(separator.len());
 
                 // Parse the index part.
-                parse_index(index_s);
+                parse_index(index_s, true);
 
                 // Pass-through the path part.
                 path = Some(path_s);
@@ -100,10 +104,10 @@ fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEnt
                 if remaining.len() == 0 {
                     // fxxk the borrow checker
                     // index = Some(1);
-                    parse_index("1");
+                    parse_index("1", false);
                 } else {
                     // Only the index part is present.
-                    parse_index(remaining);
+                    parse_index(remaining, true);
                 }
             }
         } else {
@@ -115,6 +119,7 @@ fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEnt
     TabEntryInfo {
         needle: needle,
         index: index,
+        index_explicit: index_explicit,
         path: path,
     }
 }
@@ -126,10 +131,11 @@ mod tests {
 
 
     macro_rules! assert_tab_entry_info {
-        ($input: expr, $needle: expr, $index: expr, $path: expr) => {
+        ($input: expr, $needle: expr, $index: expr, $explicit: expr, $path: expr) => {
             let expected = TabEntryInfo {
                 needle: $needle,
                 index: $index,
+                index_explicit: $explicit,
                 path: $path,
             };
             assert_eq!(get_tab_entry_info($input), expected);
@@ -139,23 +145,23 @@ mod tests {
 
     #[test]
     fn test_tab_entry_info_parse_wellformed() {
-        assert_tab_entry_info!("", None, None, None);
-        assert_tab_entry_info!("a__0", Some("a"), Some(0), None);
-        assert_tab_entry_info!("a__0__b", Some("a"), Some(0), Some("b"));
+        assert_tab_entry_info!("", None, None, false, None);
+        assert_tab_entry_info!("a__0", Some("a"), Some(0), true, None);
+        assert_tab_entry_info!("a__0__b", Some("a"), Some(0), true, Some("b"));
     }
 
 
     #[test]
     fn test_tab_entry_info_parse_malformed() {
-        assert_tab_entry_info!("a", None, None, None);
-        assert_tab_entry_info!("a__", Some("a"), Some(1), None);
-        assert_tab_entry_info!("a__x", Some("a"), None, None);
-        assert_tab_entry_info!("a____b", Some("a"), None, Some("b"));
+        assert_tab_entry_info!("a", None, None, false, None);
+        assert_tab_entry_info!("a__", Some("a"), Some(1), false, None);
+        assert_tab_entry_info!("a__x", Some("a"), None, false, None);
+        assert_tab_entry_info!("a____b", Some("a"), None, false, Some("b"));
     }
 
     #[test]
     fn test_tab_entry_info_parse_malformed_deviations() {
         // Original impl: Some("a"), Some(0), None
-        assert_tab_entry_info!("a__01__b", Some("a"), Some(0), Some("b"));
+        assert_tab_entry_info!("a__01__b", Some("a"), Some(0), true, Some("b"));
     }
 }
