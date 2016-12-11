@@ -7,29 +7,44 @@ use autojump_match::Matcher;
 use autojump_utils;
 
 
-pub fn query(config: &Config, needles: Vec<String>) {
-    let needles = if needles.is_empty() {
-        vec!["".to_owned()]
-    } else {
-        needles
-    };
+struct QueryConfig<'a> {
+    needles: Vec<&'a str>,
+    check_existence: bool,
+    index: usize,
+}
 
-    let result = do_query(config, needles, true);
+
+enum Query<'a> {
+    Execute(QueryConfig<'a>),
+    EarlyResult(path::PathBuf),
+}
+
+
+pub fn query(config: &Config, needles: Vec<String>) {
+    let needles: Vec<_> = needles.iter().map(|s| s.as_str()).collect();
+    let result = match prepare_query(&needles, true) {
+        Query::Execute(query_cfg) => do_query(config, query_cfg),
+        Query::EarlyResult(path) => path,
+    };
     println!("{}", result.to_string_lossy());
 }
 
 
-fn do_query(config: &Config,
-            needles: Vec<String>,
-            check_existence: bool) -> path::PathBuf {
-    let needles = autojump_utils::sanitize(&needles);
+fn prepare_query<'a>(needles: &'a [&'a str],
+                     check_existence: bool) -> Query<'a> {
+    let needles = if needles.is_empty() {
+        vec![""]
+    } else {
+        autojump_utils::sanitize(needles)
+    };
 
     // Try to parse the first needle (command-line argument) as tab entry
     // spec.
     let tab = autojump_utils::get_tab_entry_info(needles[0]);
     if tab.path.is_some() {
         // Just trust the auto-completion, like the original impl does.
-        return path::Path::new(tab.path.unwrap()).to_path_buf();
+        let result = path::Path::new(tab.path.unwrap()).to_path_buf();
+        return Query::EarlyResult(result);
     }
 
     // Override query needles if tab entry is found, also set the index
@@ -43,6 +58,19 @@ fn do_query(config: &Config,
         index = 0;
         needles
     };
+
+    Query::Execute(QueryConfig {
+        needles: needles,
+        check_existence: check_existence,
+        index: index,
+    })
+}
+
+
+fn do_query<'a>(config: &Config, query: QueryConfig<'a>) -> path::PathBuf {
+    let needles = query.needles;
+    let check_existence = query.check_existence;
+    let index = query.index;
 
     let entries = {
         let mut tmp = autojump_data::load(config);
