@@ -9,7 +9,7 @@ pub fn purge(config: &Config) {
         .filter(|ent| ent.path.exists())
         .collect();
 
-    // TODO: save
+    autojump_data::save(config, &entries).unwrap();
 
     let new_len = entries.len();
     println!("Purged {} entries.", old_len - new_len);
