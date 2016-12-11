@@ -8,6 +8,7 @@ extern crate autojump;
 extern crate autojump_data;
 extern crate autojump_utils;
 
+mod manip;
 mod purge;
 mod stat;
 
@@ -86,6 +87,18 @@ fn main() {
     // Process arguments.
     // All arguments are mutually exclusive, so we just check for presence
     // one-by-one.
+    if args.flag_add.is_some() {
+        manip::add(&config, args.flag_add.unwrap());
+        return;
+    }
+    if args.flag_increase.is_some() {
+        manip::increase(&config, args.flag_increase.unwrap() as f64);
+        return;
+    }
+    if args.flag_decrease.is_some() {
+        manip::decrease(&config, args.flag_decrease.unwrap() as f64);
+        return;
+    }
     if args.flag_purge {
         purge::purge(&config);
         return;
