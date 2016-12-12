@@ -38,7 +38,7 @@ impl<'a> FuzzyMatcher<'a> {
             .map(|p| (p.as_ref().file_name(), p))
             .filter(|&(s, _)| s.is_some())
             .map(|(s, p)| (s.unwrap().to_string_lossy().into_owned(), p))
-            .map(move |(s, p)| (strsim::jaro(self.needle, &s), p))
+            .map(move |(s, p)| (strsim::jaro_winkler(self.needle, &s), p))
             .filter(move |&(sim, _)| sim >= self.threshold)
             .map(|(_, p)| p)
     }
