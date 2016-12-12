@@ -1,3 +1,5 @@
+#![feature(conservative_impl_trait)]
+
 extern crate regex;
 extern crate strsim;
 

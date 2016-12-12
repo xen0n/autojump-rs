@@ -1,3 +1,4 @@
+use std::iter;
 use std::path;
 
 use regex;
@@ -10,18 +11,6 @@ pub struct Matcher<'a> {
     fuzzy_matcher: fuzzy::FuzzyMatcher<'a>,
     re_anywhere: regex::Regex,
     re_consecutive: regex::Regex,
-}
-
-
-fn filter_path<'p, P, F>(l: &'p [P], f: F) -> Vec<&'p path::Path>
-        where P: AsRef<path::Path>, F: Fn(&&path::Path) -> bool {
-    l.iter().map(|p| p.as_ref()).filter(f).collect()
-}
-
-
-fn filter_path_with_re<'p, P>(l: &'p [P], re: &regex::Regex) -> Vec<&'p path::Path>
-        where P: AsRef<path::Path> {
-    filter_path(l, |p| re.is_match(p.to_string_lossy().to_mut()))
 }
 
 
@@ -66,13 +55,21 @@ impl<'a> Matcher<'a> {
         }
     }
 
-    pub fn execute<'p, P>(&self, haystack: &'p [P]) -> Vec<&'p path::Path>
-            where P: AsRef<path::Path> {
-        let mut result = vec![];
-        result.extend(filter_path_with_re(haystack, &self.re_consecutive));
-        result.extend(self.fuzzy_matcher.filter_path(haystack));
-        result.extend(filter_path_with_re(haystack, &self.re_anywhere));
-        result
+    pub fn execute<'p, P>(&'a self, haystack: &'p [P]) -> impl iter::Iterator<Item=&'p P> + 'a
+            where P: AsRef<path::Path>, 'p: 'a {
+        // Iterator sadness...
+        macro_rules! filter_path_with_re {
+            ($l: expr, $re: expr) => {
+                $l
+                    .iter()
+                    .filter(move |&p| $re.is_match(p.as_ref().to_string_lossy().to_mut()))
+            };
+        }
+
+
+        filter_path_with_re!(haystack, self.re_consecutive)
+            .chain(self.fuzzy_matcher.filter_path(haystack))
+            .chain(filter_path_with_re!(haystack, self.re_anywhere))
     }
 }
 
@@ -97,55 +94,4 @@ mod tests {
         a!(["测试", "bar"], true);
         a!(["foo", "bar", "测试", "baZ"], false);
     }
-
-
-    #[test]
-    fn test_match_anywhere() {
-        let needles = vec!["foo", "baz"];
-        let re = re_based::prepare_regex(
-            &needles,
-            re_based::re_match_anywhere,
-            false,
-            );
-
-        let haystack = vec![
-            path::Path::new("/foo/bar/baz"),
-            path::Path::new("/baz/foo/bar"),
-            path::Path::new("/foo/baz"),
-        ];
-
-        assert_eq!(
-            filter_path_with_re(&haystack, &re),
-            [
-                path::Path::new("/foo/bar/baz"),
-                path::Path::new("/foo/baz"),
-            ]);
-    }
-
-
-    #[test]
-    fn test_match_consecutive() {
-        let needles = vec!["foo", "baz"];
-        let re = re_based::prepare_regex(
-            &needles,
-            re_based::re_match_consecutive,
-            false,
-            );
-
-        let haystack = vec![
-            path::Path::new("/foo/bar/baz"),
-            path::Path::new("/foo/baz/moo"),
-            path::Path::new("/moo/foo/baz"),
-            path::Path::new("/foo/baz"),
-        ];
-
-        assert_eq!(
-            filter_path_with_re(&haystack, &re),
-            [
-                path::Path::new("/moo/foo/baz"),
-                path::Path::new("/foo/baz"),
-            ]);
-    }
-
-
 }

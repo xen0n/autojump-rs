@@ -50,7 +50,11 @@ fn test_fuzzy() {
             let matcher = FuzzyMatcher::defaults($needle);
             let haystack: Vec<&path::Path> = vec![$(path::Path::new($x), )*];
             let expected: Vec<&path::Path> = vec![$(path::Path::new($y), )*];
-            assert_eq!(matcher.filter_path(&haystack), expected);
+            let actual: Vec<_> = matcher.filter_path(&haystack).collect();
+            assert_eq!(expected.len(), actual.len());
+            for (i, j) in expected.into_iter().zip(actual.into_iter()) {
+                assert_eq!(&i, j);
+            }
         };
     }
 
@@ -86,20 +90,23 @@ fn test_matcher() {
         path::Path::new("/foo/baz"),
     ];
 
-    assert_eq!(
-        matcher.execute(&haystack),
-        [
-            // consecutive matcher
-            path::Path::new("/moo/foo/baz"),
-            path::Path::new("/foo/baz"),
-            // fuzzy matcher
-            path::Path::new("/foo/bar/baz"),
-            path::Path::new("/moo/foo/baz"),
-            path::Path::new("/baz/foo/bar"),
-            path::Path::new("/foo/baz"),
-            // anywhere matcher
-            path::Path::new("/foo/bar/baz"),
-            path::Path::new("/moo/foo/baz"),
-            path::Path::new("/foo/baz"),
-        ]);
+    let actual: Vec<_> = matcher.execute(&haystack).collect();
+    let expected = vec![
+        // consecutive matcher
+        path::Path::new("/moo/foo/baz"),
+        path::Path::new("/foo/baz"),
+        // fuzzy matcher
+        path::Path::new("/foo/bar/baz"),
+        path::Path::new("/moo/foo/baz"),
+        path::Path::new("/baz/foo/bar"),
+        path::Path::new("/foo/baz"),
+        // anywhere matcher
+        path::Path::new("/foo/bar/baz"),
+        path::Path::new("/moo/foo/baz"),
+        path::Path::new("/foo/baz"),
+    ];
+    assert_eq!(actual.len(), expected.len());
+    for (i, j) in expected.into_iter().zip(actual.into_iter()) {
+        assert_eq!(&i, j);
+    }
 }
