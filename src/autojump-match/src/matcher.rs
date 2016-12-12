@@ -2,11 +2,12 @@ use std::path;
 
 use regex;
 
+use super::fuzzy;
 use super::re_based;
 
 
-pub struct Matcher {
-    // needles: Vec<&'a str>,
+pub struct Matcher<'a> {
+    fuzzy_matcher: fuzzy::FuzzyMatcher<'a>,
     re_anywhere: regex::Regex,
     re_consecutive: regex::Regex,
 }
@@ -39,13 +40,14 @@ fn detect_smartcase(needles: &[&str]) -> bool {
 }
 
 
-impl Matcher {
-    pub fn new_smartcase(needles: Vec<&str>) -> Matcher {
+impl<'a> Matcher<'a> {
+    pub fn new_smartcase(needles: Vec<&'a str>) -> Matcher<'a> {
         let ignore_case = detect_smartcase(&needles);
         Matcher::new(needles, ignore_case)
     }
 
-    pub fn new(needles: Vec<&str>, ignore_case: bool) -> Matcher {
+    pub fn new(needles: Vec<&'a str>, ignore_case: bool) -> Matcher<'a> {
+        let fuzzy_matcher = fuzzy::FuzzyMatcher::defaults(needles[needles.len() - 1]);
         let re_anywhere = re_based::prepare_regex(
             &needles,
             re_based::re_match_anywhere,
@@ -58,7 +60,7 @@ impl Matcher {
             );
 
         Matcher {
-            // needles: needles,
+            fuzzy_matcher: fuzzy_matcher,
             re_anywhere: re_anywhere,
             re_consecutive: re_consecutive,
         }
@@ -68,7 +70,7 @@ impl Matcher {
             where P: AsRef<path::Path> {
         let mut result = vec![];
         result.extend(filter_path_with_re(haystack, &self.re_consecutive));
-        // TODO: fuzzy matcher
+        result.extend(self.fuzzy_matcher.filter_path(haystack));
         result.extend(filter_path_with_re(haystack, &self.re_anywhere));
         result
     }

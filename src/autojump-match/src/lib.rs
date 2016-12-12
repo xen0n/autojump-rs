@@ -1,5 +1,7 @@
 extern crate regex;
+extern crate strsim;
 
+mod fuzzy;
 mod matcher;
 mod re_based;
 
