@@ -24,23 +24,22 @@ Usage:
   autojump --complete [<dir>...]
   autojump --purge
   autojump (-a <dir> | --add <dir>)
-  autojump (-i <weight> | --increase <weight>)
-  autojump (-d <weight> | --decrease <weight>)
+  autojump (-i | --increase) [<weight>]
+  autojump (-d | --decrease) [<weight>]
   autojump (-s | --stat)
   autojump (-h | --help)
   autojump (-v | --version)
 
 
-positional arguments:
+Positional arguments:
   DIR                          directory to jump to
+  WEIGHT                       weight to increase/decrease for current dir
 
-optional arguments:
+Optional arguments:
   -h, --help                   show this help message and exit
   -a DIR, --add DIR            add path
-  -i WEIGHT, --increase WEIGHT
-                               increase current directory weight
-  -d WEIGHT, --decrease WEIGHT
-                               decrease current directory weight
+  -i, --increase               increase current directory weight, default 10
+  -d, --decrease               decrease current directory weight, default 15
   --complete                   used for tab completion
   --purge                      remove non-existent paths from database
   -s, --stat                   show database entries and their key weights
@@ -53,11 +52,12 @@ Please see autojump(1) man pages for full documentation.
 #[derive(RustcDecodable)]
 struct Args {
     arg_dir: Vec<String>,
+    arg_weight: Option<isize>,
     flag_complete: bool,
     flag_purge: bool,
     flag_add: Option<String>,
-    flag_increase: Option<isize>,
-    flag_decrease: Option<isize>,
+    flag_increase: bool,
+    flag_decrease: bool,
     flag_stat: bool,
     flag_version: bool,
 }
@@ -99,12 +99,12 @@ fn main() {
         manip::add(&config, args.flag_add.unwrap());
         return;
     }
-    if args.flag_increase.is_some() {
-        manip::increase(&config, args.flag_increase.unwrap() as f64);
+    if args.flag_increase {
+        manip::increase(&config, args.arg_weight);
         return;
     }
-    if args.flag_decrease.is_some() {
-        manip::decrease(&config, args.flag_decrease.unwrap() as f64);
+    if args.flag_decrease {
+        manip::decrease(&config, args.arg_weight);
         return;
     }
     if args.flag_purge {

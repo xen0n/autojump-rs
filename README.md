@@ -90,12 +90,8 @@ implementation. These are:
     [`docopt.rs`][docopt.rs] library, as is shown in `crates.io` statistics
     and GitHub activities. So it's necessary to re-arrange the help messages
     at least, as the `docopt` family of argument parsers mandate a specific
-    style for them.
-
-    Also, due to [a limitation of docopt][docopt-limitation] optional flag
-    arguments are not supported, so it's required to provide the weights when
-    you do `--increase` or `--decrease`. The original defaults are `10` and
-    `15` respectively, so you can manually specify them in the meantime.
+    style for them. However this shouldn't be any problem, just that it's
+    different. Again, who looks at the usage screen all the day? XD
 
 *   Different algorithm chosen for fuzzy matching.
 
@@ -114,7 +110,6 @@ implementation. These are:
 
 [rust-argparse]: https://github.com/tailhook/rust-argparse
 [docopt.rs]: https://github.com/docopt/docopt.rs
-[docopt-limitation]: https://github.com/docopt/docopt.rs/issues/167
 [difflib]: https://docs.python.org/3.5/library/difflib.html
 [strsim-rs]: https://github.com/dguo/strsim-rs
 [jaro]: https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance

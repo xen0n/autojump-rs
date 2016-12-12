@@ -6,8 +6,8 @@ use autojump_data;
 use autojump_data::Entry;
 
 
-const DEFAULT_INCREASE_WEIGHT: f64 = 10.0;
-// const DEFAULT_DECREASE_WEIGHT: f64 = 15.0;
+const DEFAULT_INCREASE_WEIGHT: isize = 10;
+const DEFAULT_DECREASE_WEIGHT: isize = 15;
 
 
 fn increase_weight(old_w: f64, inc_w: f64) -> f64 {
@@ -93,18 +93,20 @@ fn do_decrease_and_save<P>(config: &Config, p: P, w: f64) -> Entry
 
 pub fn add<P>(config: &Config, p: P)
         where P: AsRef<path::Path> {
-    do_increase_and_save(config, p, DEFAULT_INCREASE_WEIGHT);
+    do_increase_and_save(config, p, DEFAULT_INCREASE_WEIGHT as f64);
 }
 
 
-pub fn increase(config: &Config, w: f64) {
+pub fn increase(config: &Config, w: Option<isize>) {
+    let w = w.unwrap_or(DEFAULT_INCREASE_WEIGHT) as f64;
     let p = env::current_dir().unwrap();
     let entry = do_increase_and_save(config, p, w);
     println!("{}", entry);
 }
 
 
-pub fn decrease(config: &Config, w: f64) {
+pub fn decrease(config: &Config, w: Option<isize>) {
+    let w = w.unwrap_or(DEFAULT_DECREASE_WEIGHT) as f64;
     let p = env::current_dir().unwrap();
     let entry = do_decrease_and_save(config, p, w);
     println!("{}", entry);
