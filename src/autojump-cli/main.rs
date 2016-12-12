@@ -16,7 +16,7 @@ mod stat;
 
 
 const VERSION_TRACK: &'static str = "22.5.0";
-const VERSION: &'static str = "0.1";
+const VERSION: &'static str = "0.1.0";
 
 
 docopt!(Args derive Debug, "
