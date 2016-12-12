@@ -2,6 +2,7 @@
 name = "autojump-rs"
 version = "0.1.0"
 authors = ["Wang Xuerui <git@xen0n.name>"]
+build = "build.rs"
 
 
 [workspace]
@@ -16,6 +17,11 @@ autojump-utils = { path = "src/autojump-utils", version = "0.1.0" }
 
 rustc-serialize = "0.3"
 docopt = "0.6"
+lazy_static = "0.2"
+
+
+[build-dependencies]
+walkdir = "0.1"
 
 
 [[bin]]

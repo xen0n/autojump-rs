@@ -1,5 +1,7 @@
 extern crate rustc_serialize;
 extern crate docopt;
+#[macro_use]
+extern crate lazy_static;
 
 extern crate autojump;
 extern crate autojump_data;
@@ -15,6 +17,38 @@ mod stat;
 const VERSION_TRACK: &'static str = "22.5.0";
 const VERSION: &'static str = "0.1.0";
 
+// Inspired by and taken from `rustfmt`.
+// Include git commit hash and worktree status; contents are like
+//   const COMMIT_HASH: Option<&'static str> = Some("5d53581");
+//   const WORKTREE_CLEAN: Option<bool> = Some(false);
+// with `None` if running git failed, eg if it is not installed.
+include!(concat!(env!("OUT_DIR"), "/git_info.rs"));
+
+lazy_static! {
+    static ref VERSION_STR: String = {
+        let mut tmp = String::new();
+        tmp.push_str("autojump v");
+        tmp.push_str(VERSION_TRACK);
+        tmp.push_str("\nautojump-rs v");
+        tmp.push_str(VERSION);
+
+        // add version control status if available
+        if let Some(commit) = COMMIT_HASH {
+            tmp.push_str(" (");
+            tmp.push_str(commit);
+
+            if let Some(clean) = WORKTREE_CLEAN {
+                if !clean {
+                    tmp.push_str("-dirty");
+                }
+            }
+
+            tmp.push(')');
+        }
+
+        tmp
+    };
+}
 
 const USAGE: &'static str = "
 Automatically jump to directory passed as an argument.
@@ -116,7 +150,7 @@ fn main() {
         return;
     }
     if args.flag_version {
-        println!("autojump v{} (autojump-rs v{})", VERSION_TRACK, VERSION);
+        println!("{}", *VERSION_STR);
         return;
     }
 
