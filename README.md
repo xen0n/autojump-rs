@@ -37,11 +37,11 @@ greatly reduced. Typical running time is like this on the author's Core
 i7-2670QM laptop, with a directory database of 256 entries:
 
 ```
-time ./autojump/bin/autojump au
+$ time ./autojump/bin/autojump au
 /home/xenon/src/autojump-rs
 ./autojump/bin/autojump au  0.05s user 0.02s system 96% cpu 0.080 total
 
-time ./autojump-rs/target/release/autojump au
+$ time ./autojump-rs/target/release/autojump au
 /home/xenon/src/autojump-rs
 ./autojump-rs/target/release/autojump au  0.02s user 0.00s system 94% cpu 0.020 total
 ```
@@ -51,18 +51,18 @@ cycle shaved off counts. On a Loongson 3A2000 box running at 1.0 GHz the
 timings are like this, with a database of the same size:
 
 ```
-time ./autojump/bin/autojump au
+$ time ./autojump/bin/autojump au
 /opt/store/src/autojump-rs
 ./autojump/bin/autojump au  0.15s user 0.02s system 97% cpu 0.178 total
 
-time ./autojump-rs/target/release/autojump au
+$ time ./autojump-rs/target/release/autojump au
 /opt/store/src/autojump-rs
 ./autojump-rs/target/release/autojump au  0.04s user 0.01s system 96% cpu 0.051 total
 ```
 
-And, of course, the port no longer interacts with Python in any way, so the
+And, of course, the program no longer interacts with Python in any way, so the
 virtualenv-related crashes are no more. Say goodbye to the dreaded
-`ImportError`'s *every `$PS1` in a virtualenv with the system-default
+`ImportError`'s *showing every `$PS1` in a virtualenv with the system-default
 Python*!
 
 ```
@@ -76,9 +76,9 @@ ImportError: No module named autojump_data
 
 ## Compatibility
 
-The on-disk format of the text database should be identical. That said, edge
-cases certainly exist. The author is developing and using this on Linux, so
-other platforms may need a little more love.
+The on-disk format of the text database should be identical. But as the author
+is developing and using this on Linux, other platforms may need a little more
+love. (Patches are welcome, of course!)
 
 That said, there're some IMO very minor deviations from the original Python
 implementation. These are:
