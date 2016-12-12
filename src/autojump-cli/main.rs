@@ -1,6 +1,3 @@
-#![feature(plugin)]
-#![plugin(docopt_macros)]
-
 extern crate rustc_serialize;
 extern crate docopt;
 
@@ -19,7 +16,7 @@ const VERSION_TRACK: &'static str = "22.5.0";
 const VERSION: &'static str = "0.1.0";
 
 
-docopt!(Args derive Debug, "
+const USAGE: &'static str = "
 Automatically jump to directory passed as an argument.
 
 Usage:
@@ -50,7 +47,11 @@ optional arguments:
   -v, --version                show version information
 
 Please see autojump(1) man pages for full documentation.
-",
+";
+
+
+#[derive(RustcDecodable)]
+struct Args {
     arg_dir: Vec<String>,
     flag_complete: bool,
     flag_purge: bool,
@@ -59,7 +60,7 @@ Please see autojump(1) man pages for full documentation.
     flag_decrease: Option<isize>,
     flag_stat: bool,
     flag_version: bool,
-);
+}
 
 
 #[cfg(not(windows))]
@@ -82,7 +83,9 @@ fn check_if_sourced() {
 fn main() {
     check_if_sourced();
 
-    let args: Args = Args::docopt().decode().unwrap_or_else(|e| e.exit());
+    let args: Args = docopt::Docopt::new(USAGE)
+        .and_then(|d| d.decode())
+        .unwrap_or_else(|e| e.exit());
     let config = autojump::Config::defaults();
 
     // Process arguments.
