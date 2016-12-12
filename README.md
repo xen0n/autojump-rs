@@ -76,9 +76,16 @@ ImportError: No module named autojump_data
 
 ## Compatibility
 
-The on-disk format of the text database should be identical. But as the author
-is developing and using this on Linux, other platforms may need a little more
-love. (Patches are welcome, of course!)
+All of the command line flags and arguments are now implemented, and behave
+exactly like the original. Being a drop-in replacement, all other shell
+features like tab completion should work too. (Except `jc` and `jco`; see
+below.)
+
+As for the text database, the on-disk format should be identical. (Actually
+there is a little difference in the representation of floats, but it doesn't
+matter.) However, as the author is developing and using this on Linux, other
+platforms may need a little more love, although all the libraries used are
+lovingly cross-platform. (Patches are welcome, of course!)
 
 That said, there're some IMO very minor deviations from the original Python
 implementation. These are:
