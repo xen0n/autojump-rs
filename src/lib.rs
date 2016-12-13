@@ -24,10 +24,7 @@ pub const VERSION: &'static str = "0.1.0";
 
 
 /// Get a version string suitable for the CLI display.
-pub fn get_version_str(
-        vcs_commit: Option<&str>,
-        vcs_clean: Option<bool>
-        ) -> String {
+pub fn get_version_str(vcs_commit: Option<&str>, vcs_clean: Option<bool>) -> String {
     let mut tmp = String::new();
     tmp.push_str("autojump v");
     tmp.push_str(VERSION_TRACK);
@@ -50,4 +47,3 @@ pub fn get_version_str(
 
     tmp
 }
-

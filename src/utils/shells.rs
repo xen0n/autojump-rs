@@ -74,9 +74,7 @@ mod tests {
             tmp.push("/some/");
             // "测试" (test) is "\xe6\xb5\x8b\xe8\xaf\x95"
             // here \xaf is mutated to \xfa to simulate invalid OS strings
-            tmp.push(ffi::OsStr::from_bytes(
-                    &[0xe6, 0xb5, 0x8b, 0xe8, 0xfa, 0x95],
-                    ));
+            tmp.push(ffi::OsStr::from_bytes(&[0xe6, 0xb5, 0x8b, 0xe8, 0xfa, 0x95]));
             tmp.push("/prefix/bin/");
             tmp.push(s);
             Err(env::VarError::NotUnicode(tmp))

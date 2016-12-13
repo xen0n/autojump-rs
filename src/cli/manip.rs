@@ -18,16 +18,13 @@ fn increase_weight(old_w: f64, inc_w: f64) -> f64 {
 fn decrease_weight(old_w: f64, dec_w: f64) -> f64 {
     let result = old_w - dec_w;
 
-    if result < 0.0 {
-        0.0
-    } else {
-        result
-    }
+    if result < 0.0 { 0.0 } else { result }
 }
 
 
 fn do_increase<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
-        where P: AsRef<path::Path> {
+    where P: AsRef<path::Path>
+{
     let p = p.as_ref();
 
     // don't process $HOME
@@ -54,7 +51,8 @@ fn do_increase<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
 
 
 fn do_increase_and_save<P>(config: &Config, p: P, w: f64) -> Entry
-        where P: AsRef<path::Path> {
+    where P: AsRef<path::Path>
+{
     let mut entries = data::load(config);
     let entry = do_increase(&mut entries, p, w);
     data::save(config, &entries).unwrap();
@@ -63,7 +61,8 @@ fn do_increase_and_save<P>(config: &Config, p: P, w: f64) -> Entry
 
 
 fn do_decrease<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
-        where P: AsRef<path::Path> {
+    where P: AsRef<path::Path>
+{
     let p = p.as_ref();
     for ent in entries.iter_mut() {
         if ent.path == p {
@@ -83,7 +82,8 @@ fn do_decrease<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
 
 
 fn do_decrease_and_save<P>(config: &Config, p: P, w: f64) -> Entry
-        where P: AsRef<path::Path> {
+    where P: AsRef<path::Path>
+{
     let mut entries = data::load(config);
     let entry = do_decrease(&mut entries, p, w);
     data::save(config, &entries).unwrap();
@@ -92,7 +92,8 @@ fn do_decrease_and_save<P>(config: &Config, p: P, w: f64) -> Entry
 
 
 pub fn add<P>(config: &Config, p: P)
-        where P: AsRef<path::Path> {
+    where P: AsRef<path::Path>
+{
     do_increase_and_save(config, p, DEFAULT_INCREASE_WEIGHT as f64);
 }
 

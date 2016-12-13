@@ -31,10 +31,11 @@ impl<'a> FuzzyMatcher<'a> {
     }
 
 
-    pub fn filter_path<'p, P>(&'a self, paths: &'p [P]) -> impl iter::Iterator<Item=&'p P> + 'a
-            where P: AsRef<path::Path>, 'p: 'a {
-        paths
-            .iter()
+    pub fn filter_path<'p, P>(&'a self, paths: &'p [P]) -> impl iter::Iterator<Item = &'p P> + 'a
+        where P: AsRef<path::Path>,
+              'p: 'a
+    {
+        paths.iter()
             .map(|p| (p.as_ref().file_name(), p))
             .filter(|&(s, _)| s.is_some())
             .map(|(s, p)| (s.unwrap().to_string_lossy().into_owned(), p))

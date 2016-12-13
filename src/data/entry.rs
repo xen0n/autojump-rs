@@ -11,7 +11,9 @@ pub struct Entry {
 
 
 impl Entry {
-    pub fn new<P>(path: P, weight: f64) -> Entry where P: Into<path::PathBuf> {
+    pub fn new<P>(path: P, weight: f64) -> Entry
+        where P: Into<path::PathBuf>
+    {
         Entry {
             path: path.into(),
             weight: weight,
@@ -48,8 +50,7 @@ impl PartialEq for Entry {
 }
 
 
-impl Eq for Entry {
-}
+impl Eq for Entry {}
 
 
 impl Ord for Entry {

@@ -38,8 +38,7 @@ pub fn complete(config: &Config, needles: Vec<String>) {
             let real_needle = query.needles[0].clone();
             let result = do_query(config, query);
             // Convert to `&str` for tab entry info creation.
-            let result: Vec<_> = result
-                .into_iter()
+            let result: Vec<_> = result.into_iter()
                 .map(|p| p.to_string_lossy().into_owned())
                 .collect();
             let strs: Vec<_> = result.iter().map(|p| p.as_str()).collect();
@@ -74,7 +73,8 @@ pub fn query(config: &Config, needles: Vec<String>) {
 fn prepare_query<'a>(needles: &'a [&'a str],
                      check_existence: bool,
                      count: usize,
-                     use_fallback: bool) -> Query<'a> {
+                     use_fallback: bool)
+                     -> Query<'a> {
     let mut count = count;
     let needles = if needles.is_empty() {
         vec![""]
@@ -140,8 +140,7 @@ fn do_query<'a>(config: &Config, query: QueryConfig<'a>) -> Vec<path::PathBuf> {
         Ok(cwd) => Some(cwd),
         Err(_) => None,
     };
-    let result = result
-        .filter(|p| {
+    let result = result.filter(|p| {
             if cwd.is_some() {
                 &p.path != cwd.as_ref().unwrap()
             } else {

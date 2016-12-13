@@ -41,16 +41,10 @@ impl<'a> Matcher<'a> {
 
     pub fn new(needles: Vec<&'a str>, ignore_case: bool) -> Matcher<'a> {
         let fuzzy_matcher = fuzzy::FuzzyMatcher::defaults(needles[needles.len() - 1]);
-        let re_anywhere = re_based::prepare_regex(
-            &needles,
-            re_based::re_match_anywhere,
-            ignore_case,
-            );
-        let re_consecutive = re_based::prepare_regex(
-            &needles,
-            re_based::re_match_consecutive,
-            ignore_case,
-            );
+        let re_anywhere =
+            re_based::prepare_regex(&needles, re_based::re_match_anywhere, ignore_case);
+        let re_consecutive =
+            re_based::prepare_regex(&needles, re_based::re_match_consecutive, ignore_case);
 
         Matcher {
             fuzzy_matcher: fuzzy_matcher,
@@ -59,8 +53,10 @@ impl<'a> Matcher<'a> {
         }
     }
 
-    pub fn execute<'p, P>(&'a self, haystack: &'p [P]) -> impl iter::Iterator<Item=&'p P> + 'a
-            where P: AsRef<path::Path>, 'p: 'a {
+    pub fn execute<'p, P>(&'a self, haystack: &'p [P]) -> impl iter::Iterator<Item = &'p P> + 'a
+        where P: AsRef<path::Path>,
+              'p: 'a
+    {
         // Iterator sadness...
         macro_rules! filter_path_with_re {
             ($l: expr, $re: expr) => {
