@@ -1,29 +1,17 @@
 [package]
-name = "autojump-rs"
+name = "autojump"
 version = "0.1.0"
 authors = ["Wang Xuerui <git@xen0n.name>"]
 build = "build.rs"
 
 
-[workspace]
-members = ["src/autojump", "src/autojump-data", "src/autojump-match", "src/autojump-utils"]
-
-
 [dependencies]
-autojump = { path = "src/autojump", version = "0.1.0" }
-autojump-data = { path = "src/autojump-data", version = "0.1.0" }
-autojump-match = { path = "src/autojump-match", version = "0.1.0" }
-autojump-utils = { path = "src/autojump-utils", version = "0.1.0" }
-
-rustc-serialize = "0.3"
+atomicwrites = "0.0.14"
 docopt = "0.6"
-lazy_static = "0.2"
+regex = "0.1"
+rustc-serialize = "0.3"
+strsim = "0.5"
 
 
 [build-dependencies]
 walkdir = "0.1"
-
-
-[[bin]]
-name = "autojump"
-path = "src/autojump-cli/main.rs"

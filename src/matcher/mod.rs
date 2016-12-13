@@ -1,10 +1,14 @@
+mod fuzzy;
+mod re_based;
+
+#[cfg(test)]
+mod tests;
+
+
 use std::iter;
 use std::path;
 
 use regex;
-
-use super::fuzzy;
-use super::re_based;
 
 
 pub struct Matcher<'a> {
@@ -70,28 +74,5 @@ impl<'a> Matcher<'a> {
         filter_path_with_re!(haystack, self.re_consecutive)
             .chain(self.fuzzy_matcher.filter_path(haystack))
             .chain(filter_path_with_re!(haystack, self.re_anywhere))
-    }
-}
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-
-    #[test]
-    fn test_smartcase() {
-        macro_rules! a {
-            ($needles: tt, $y: expr) => {
-                assert_eq!(detect_smartcase(&vec! $needles), $y);
-            };
-        }
-
-        a!([], true);
-        a!([""], true);
-        a!(["foo"], true);
-        a!(["foo", "bar"], true);
-        a!(["测试", "bar"], true);
-        a!(["foo", "bar", "测试", "baZ"], false);
     }
 }

@@ -1,8 +1,25 @@
 use std::path;
 
+use super::*;
 use super::fuzzy::*;
-use super::matcher::*;
 use super::re_based::*;
+
+
+#[test]
+fn test_smartcase() {
+    macro_rules! a {
+        ($needles: tt, $y: expr) => {
+            assert_eq!(detect_smartcase(&vec! $needles), $y);
+        };
+    }
+
+    a!([], true);
+    a!([""], true);
+    a!(["foo"], true);
+    a!(["foo", "bar"], true);
+    a!(["测试", "bar"], true);
+    a!(["foo", "bar", "测试", "baZ"], false);
+}
 
 
 macro_rules! assert_re {

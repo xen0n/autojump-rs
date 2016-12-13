@@ -2,11 +2,11 @@ use std::env;
 use std::iter;
 use std::path;
 
-use autojump::Config;
-use autojump_data;
-use autojump_match::Matcher;
-use autojump_utils;
-use autojump_utils::TabEntryInfo;
+use super::super::Config;
+use super::super::data;
+use super::super::matcher::Matcher;
+use super::super::utils;
+use super::super::utils::TabEntryInfo;
 
 
 struct QueryConfig<'a> {
@@ -79,12 +79,12 @@ fn prepare_query<'a>(needles: &'a [&'a str],
     let needles = if needles.is_empty() {
         vec![""]
     } else {
-        autojump_utils::sanitize(needles)
+        utils::sanitize(needles)
     };
 
     // Try to parse the first needle (command-line argument) as tab entry
     // spec.
-    let tab = autojump_utils::get_tab_entry_info(needles[0]);
+    let tab = utils::get_tab_entry_info(needles[0]);
     if tab.path.is_some() {
         // Just trust the auto-completion, like the original impl does.
         let result = path::Path::new(tab.path.unwrap()).to_path_buf();
@@ -126,7 +126,7 @@ fn do_query<'a>(config: &Config, query: QueryConfig<'a>) -> Vec<path::PathBuf> {
     let count = query.count;
 
     let entries = {
-        let mut tmp = autojump_data::load(config);
+        let mut tmp = data::load(config);
         // Default order is ascending, but apparently we want to match the
         // other way around.
         tmp.sort_by(|a, b| b.cmp(a));

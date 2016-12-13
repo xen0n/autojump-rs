@@ -6,7 +6,7 @@ use std::time;
 
 use atomicwrites;
 
-use autojump::Config;
+use super::super::Config;
 use super::entry::Entry;
 
 

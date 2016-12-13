@@ -1,9 +1,9 @@
 use std::env;
 use std::path;
 
-use autojump::Config;
-use autojump_data;
-use autojump_data::Entry;
+use super::super::Config;
+use super::super::data;
+use super::super::data::Entry;
 
 
 const DEFAULT_INCREASE_WEIGHT: isize = 10;
@@ -55,9 +55,9 @@ fn do_increase<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
 
 fn do_increase_and_save<P>(config: &Config, p: P, w: f64) -> Entry
         where P: AsRef<path::Path> {
-    let mut entries = autojump_data::load(config);
+    let mut entries = data::load(config);
     let entry = do_increase(&mut entries, p, w);
-    autojump_data::save(config, &entries).unwrap();
+    data::save(config, &entries).unwrap();
     entry
 }
 
@@ -84,9 +84,9 @@ fn do_decrease<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
 
 fn do_decrease_and_save<P>(config: &Config, p: P, w: f64) -> Entry
         where P: AsRef<path::Path> {
-    let mut entries = autojump_data::load(config);
+    let mut entries = data::load(config);
     let entry = do_decrease(&mut entries, p, w);
-    autojump_data::save(config, &entries).unwrap();
+    data::save(config, &entries).unwrap();
     entry
 }
 

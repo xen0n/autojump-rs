@@ -1,8 +1,0 @@
-[package]
-name = "autojump-match"
-version = "0.1.0"
-authors = ["Wang Xuerui <git@xen0n.name>"]
-
-[dependencies]
-regex = "0.1"
-strsim = "0.5"
