@@ -1,7 +1,12 @@
 [package]
 name = "autojump"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Wang Xuerui <git@xen0n.name>"]
+description = "A Rust port and drop-in replacement of autojump"
+repository = "https://github.com/xen0n/autojump-rs"
+readme = "README.md"
+license = "GPL-3.0+"
+include = ["src/*.rs", "Cargo.toml", "build.rs"]
 build = "build.rs"
 
 
