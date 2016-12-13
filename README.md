@@ -17,8 +17,8 @@ for details.
 
 The package is a drop-in replacement of `autojump`. Assuming `autojump` is
 already installed, or at least the shell script part of it has been properly
-set up, and you have `~/.cargo/bin` before the system binary locations, all
-you have to do is:
+set up, and you have in `$PATH` `~/.cargo/bin` before the system binary
+locations, all you have to do is:
 
 ```sh
 cargo install autojump
