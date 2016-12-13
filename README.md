@@ -1,8 +1,9 @@
-# autojump-rs
+# autojump-rs  [![Crates.io version](https://img.shields.io/crates/v/autojump.svg)][cratesio] [![Crates.io downloads](https://img.shields.io/crates/dv/autojump.svg)][cratesio] [![Crates.io license](https://img.shields.io/crates/l/autojump.svg)](LICENSE)
 
 A port of the wildly popular helper application [`autojump`][aj] to Rust.
 
 [aj]: https://github.com/wting/autojump
+[cratesio]: https://crates.io/crates/autojump
 
 
 ## License
