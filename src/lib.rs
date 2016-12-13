@@ -20,7 +20,7 @@ pub use self::config::*;
 pub const VERSION_TRACK: &'static str = "22.5.0";
 
 /// The library's version.
-pub const VERSION: &'static str = "0.1.0";
+pub const VERSION: &'static str = "0.2.0";
 
 
 /// Get a version string suitable for the CLI display.
