@@ -6,7 +6,7 @@ use std::time;
 
 use atomicwrites;
 
-use autojump::Config;
+use super::super::Config;
 use super::entry::Entry;
 
 
@@ -101,7 +101,10 @@ fn load_backup(config: &Config) -> Vec<Entry> {
 fn save_to(file: &fs::File, data: &[Entry]) -> io::Result<()> {
     let mut writer = io::BufWriter::new(file);
     for entry in data.iter() {
-        writeln!(&mut writer, "{}\t{}", entry.weight, entry.path.to_string_lossy())?;
+        writeln!(&mut writer,
+                 "{}\t{}",
+                 entry.weight,
+                 entry.path.to_string_lossy())?;
     }
 
     Ok(())
@@ -125,9 +128,7 @@ fn need_backup(config: &Config) -> io::Result<bool> {
         let mtime = metadata.modified()?;
 
         match now.duration_since(mtime) {
-            Ok(duration) => {
-                Ok(duration.as_secs() > BACKUP_THRESHOLD)
-            }
+            Ok(duration) => Ok(duration.as_secs() > BACKUP_THRESHOLD),
             Err(_) => {
                 // Clock skew: mtime is in the future!
                 // TODO: print warning

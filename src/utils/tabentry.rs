@@ -36,11 +36,8 @@ impl<'a> TabEntryInfo<'a> {
         }
     }
 
-    pub fn from_matches(
-            needle: &'a str,
-            matches: &'a [&'a str]) -> Vec<TabEntryInfo<'a>> {
-        matches
-            .iter()
+    pub fn from_matches(needle: &'a str, matches: &'a [&'a str]) -> Vec<TabEntryInfo<'a>> {
+        matches.iter()
             .enumerate()
             .map(|(i, p)| TabEntryInfo::new(needle, i + 1, p))
             .collect()

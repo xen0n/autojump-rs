@@ -1,7 +1,7 @@
 use std::env;
 
-use autojump::Config;
-use autojump_data;
+use super::super::Config;
+use super::super::data;
 
 
 pub fn print_stat(config: &Config) {
@@ -13,7 +13,7 @@ pub fn print_stat(config: &Config) {
     let mut cwd_weight: Option<f64> = None;
 
     let entries = {
-        let mut tmp = autojump_data::load(config);
+        let mut tmp = data::load(config);
         tmp.sort();
         tmp
     };

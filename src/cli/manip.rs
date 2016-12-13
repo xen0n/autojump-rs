@@ -1,13 +1,13 @@
 use std::env;
 use std::path;
 
-use autojump::Config;
-use autojump_data;
-use autojump_data::Entry;
+use super::super::Config;
+use super::super::data;
+use super::super::data::Entry;
 
 
-const DEFAULT_INCREASE_WEIGHT: f64 = 10.0;
-// const DEFAULT_DECREASE_WEIGHT: f64 = 15.0;
+const DEFAULT_INCREASE_WEIGHT: isize = 10;
+const DEFAULT_DECREASE_WEIGHT: isize = 15;
 
 
 fn increase_weight(old_w: f64, inc_w: f64) -> f64 {
@@ -18,16 +18,13 @@ fn increase_weight(old_w: f64, inc_w: f64) -> f64 {
 fn decrease_weight(old_w: f64, dec_w: f64) -> f64 {
     let result = old_w - dec_w;
 
-    if result < 0.0 {
-        0.0
-    } else {
-        result
-    }
+    if result < 0.0 { 0.0 } else { result }
 }
 
 
 fn do_increase<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
-        where P: AsRef<path::Path> {
+    where P: AsRef<path::Path>
+{
     let p = p.as_ref();
 
     // don't process $HOME
@@ -54,16 +51,18 @@ fn do_increase<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
 
 
 fn do_increase_and_save<P>(config: &Config, p: P, w: f64) -> Entry
-        where P: AsRef<path::Path> {
-    let mut entries = autojump_data::load(config);
+    where P: AsRef<path::Path>
+{
+    let mut entries = data::load(config);
     let entry = do_increase(&mut entries, p, w);
-    autojump_data::save(config, &entries).unwrap();
+    data::save(config, &entries).unwrap();
     entry
 }
 
 
 fn do_decrease<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
-        where P: AsRef<path::Path> {
+    where P: AsRef<path::Path>
+{
     let p = p.as_ref();
     for ent in entries.iter_mut() {
         if ent.path == p {
@@ -83,28 +82,32 @@ fn do_decrease<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
 
 
 fn do_decrease_and_save<P>(config: &Config, p: P, w: f64) -> Entry
-        where P: AsRef<path::Path> {
-    let mut entries = autojump_data::load(config);
+    where P: AsRef<path::Path>
+{
+    let mut entries = data::load(config);
     let entry = do_decrease(&mut entries, p, w);
-    autojump_data::save(config, &entries).unwrap();
+    data::save(config, &entries).unwrap();
     entry
 }
 
 
 pub fn add<P>(config: &Config, p: P)
-        where P: AsRef<path::Path> {
-    do_increase_and_save(config, p, DEFAULT_INCREASE_WEIGHT);
+    where P: AsRef<path::Path>
+{
+    do_increase_and_save(config, p, DEFAULT_INCREASE_WEIGHT as f64);
 }
 
 
-pub fn increase(config: &Config, w: f64) {
+pub fn increase(config: &Config, w: Option<isize>) {
+    let w = w.unwrap_or(DEFAULT_INCREASE_WEIGHT) as f64;
     let p = env::current_dir().unwrap();
     let entry = do_increase_and_save(config, p, w);
     println!("{}", entry);
 }
 
 
-pub fn decrease(config: &Config, w: f64) {
+pub fn decrease(config: &Config, w: Option<isize>) {
+    let w = w.unwrap_or(DEFAULT_DECREASE_WEIGHT) as f64;
     let p = env::current_dir().unwrap();
     let entry = do_decrease_and_save(config, p, w);
     println!("{}", entry);

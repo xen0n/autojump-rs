@@ -1,24 +1,22 @@
 [package]
-name = "autojump-rs"
-version = "0.1.0"
+name = "autojump"
+version = "0.2.0"
 authors = ["Wang Xuerui <git@xen0n.name>"]
-
-
-[workspace]
-members = ["src/autojump", "src/autojump-data", "src/autojump-match", "src/autojump-utils"]
+description = "A Rust port and drop-in replacement of autojump"
+repository = "https://github.com/xen0n/autojump-rs"
+readme = "README.md"
+license = "GPL-3.0+"
+include = ["src/*.rs", "Cargo.toml", "build.rs"]
+build = "build.rs"
 
 
 [dependencies]
-autojump = { path = "src/autojump", version = "0.1.0" }
-autojump-data = { path = "src/autojump-data", version = "0.1.0" }
-autojump-match = { path = "src/autojump-match", version = "0.1.0" }
-autojump-utils = { path = "src/autojump-utils", version = "0.1.0" }
-
-rustc-serialize = "0.3"
+atomicwrites = "0.0.14"
 docopt = "0.6"
-docopt_macros = "0.6"
+regex = "0.1"
+rustc-serialize = "0.3"
+strsim = "0.5"
 
 
-[[bin]]
-name = "autojump"
-path = "src/autojump-cli/main.rs"
+[build-dependencies]
+walkdir = "0.1"
