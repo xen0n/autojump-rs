@@ -132,11 +132,12 @@ implementation. These are:
 
 ## Future plans
 
-After initial porting, it's now time to re-organize the code to be more
-library-like (rather than application-like) and Rustic. After that the project
-would likely be published on crates.io. Hell I even want to write a `fasd`
-backend too, but I don't presently have *that* much free time. Anyway,
-contributions and bug reports are welcome!
+Now that platform support is mostly considered okay, next steps would be
+more refactoring and bug fixing. I once considered Git commit ids in
+release artifact "cool", but I no longer want that now, so that would be
+gone in the next release. And the `jc` bug should also be tackled.
+Hell I even want to write a `fasd` backend too, but I don't presently have
+*that* much free time. Anyway, contributions and bug reports are welcome!
 
 
 <!-- vim:set ai et ts=4 sw=4 sts=4 fenc=utf-8: -->
