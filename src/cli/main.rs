@@ -39,7 +39,7 @@ Please see autojump(1) man pages for full documentation.
 ";
 
 
-#[derive(RustcDecodable)]
+#[derive(Deserialize)]
 struct Args {
     arg_dir: Vec<String>,
     arg_weight: Option<isize>,
@@ -74,7 +74,7 @@ pub fn main(version_str: String) {
     check_if_sourced();
 
     let args: Args = docopt::Docopt::new(USAGE)
-        .and_then(|d| d.decode())
+        .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
     let config = Config::defaults();
 

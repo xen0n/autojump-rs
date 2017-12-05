@@ -15,18 +15,19 @@ const BACKUP_THRESHOLD: u64 = 24 * 60 * 60;  // 1 d
 
 #[cfg(target_os = "macos")]
 fn migrate_osx_xdg_data(config: &Config) -> io::Result<()> {
-    let xdg_aj_home = autojump::xdg_home_hardcoded();
+    let xdg_aj_home = super::super::xdg_home_hardcoded();
     if !xdg_aj_home.exists() {
-        Ok(())
+        return Ok(())
     }
 
     let old_config = Config::from_prefix(&xdg_aj_home);
 
-    fs::copy(old_config.data_path, config.data_path)?;
-    fs::copy(old_config.backup_path, config.backup_path)?;
+    fs::copy(&old_config.data_path, &config.data_path)?;
+    fs::copy(&old_config.backup_path, &config.backup_path)?;
 
-    fs::remove_file(old_config.data_path)?;
-    fs::remove_file(old_config.backup_path)?;
+    fs::remove_file(&old_config.data_path)?;
+    fs::remove_file(&old_config.backup_path)?;
+    Ok(())
 }
 
 

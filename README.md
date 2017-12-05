@@ -1,8 +1,9 @@
-# autojump-rs
+# autojump-rs  [![Crates.io version](https://img.shields.io/crates/v/autojump.svg)][cratesio] [![Crates.io downloads](https://img.shields.io/crates/dv/autojump.svg)][cratesio] [![Crates.io license](https://img.shields.io/crates/l/autojump.svg)](LICENSE)
 
 A port of the wildly popular helper application [`autojump`][aj] to Rust.
 
 [aj]: https://github.com/wting/autojump
+[cratesio]: https://crates.io/crates/autojump
 
 
 ## License
@@ -14,12 +15,19 @@ for details.
 
 ## Install
 
-This isn't published on crates.io yet, but you can always clone the repository
-and `cargo build --release` yourself. Assuming you already have original
-`autojump` installed and properly set up, it's only a simple matter of putting
-the result executable on your `$PATH`, overriding the original script. (You
-may need to do a `hash -r` before using in your currently open shells, of
-course.)
+The package is a drop-in replacement of `autojump`. Assuming `autojump` is
+already installed, or at least the shell script part of it has been properly
+set up, and you have in `$PATH` `~/.cargo/bin` before the system binary
+locations, all you have to do is:
+
+```sh
+cargo install autojump
+
+# tell the shell to forget about previous location of autojump
+hash -r
+```
+
+(Manually cloning the repository and building is okay, of course.)
 
 
 ## Features
@@ -87,6 +95,12 @@ matter.) However, as the author is developing and using this on Linux, other
 platforms may need a little more love, although all the libraries used are
 lovingly cross-platform. (Patches are welcome, of course!)
 
+The Windows batch files shipped with the original `autojump` has Python
+hard-coded into them, and obviously that won't work with `autojump-rs`.
+Use the batch files in the `windows` directory instead; just replacing the
+original files and putting `autojump.exe` along with them should work.
+(Thanks @tomv564 for the Windows testing!)
+
 That said, there're some IMO very minor deviations from the original Python
 implementation. These are:
 
@@ -124,11 +138,12 @@ implementation. These are:
 
 ## Future plans
 
-After initial porting, it's now time to re-organize the code to be more
-library-like (rather than application-like) and Rustic. After that the project
-would likely be published on crates.io. Hell I even want to write a `fasd`
-backend too, but I don't presently have *that* much free time. Anyway,
-contributions and bug reports are welcome!
+Now that platform support is mostly considered okay, next steps would be
+more refactoring and bug fixing. I once considered Git commit ids in
+release artifact "cool", but I no longer want that now, so that would be
+gone in the next release. And the `jc` bug should also be tackled.
+Hell I even want to write a `fasd` backend too, but I don't presently have
+*that* much free time. Anyway, contributions and bug reports are welcome!
 
 
 <!-- vim:set ai et ts=4 sw=4 sts=4 fenc=utf-8: -->

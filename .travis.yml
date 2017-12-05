@@ -1,0 +1,94 @@
+# Based on the "trust" template v0.1.1
+# https://github.com/japaric/trust/tree/v0.1.1
+
+dist: trusty
+language: rust
+services: docker
+sudo: required
+
+env:
+  global:
+    - CRATE_NAME=autojump
+
+matrix:
+  include:
+    # Android
+    - env: TARGET=aarch64-linux-android DISABLE_TESTS=1
+    - env: TARGET=arm-linux-androideabi DISABLE_TESTS=1
+    - env: TARGET=armv7-linux-androideabi DISABLE_TESTS=1
+    - env: TARGET=i686-linux-android DISABLE_TESTS=1
+    - env: TARGET=x86_64-linux-android DISABLE_TESTS=1
+
+    # Linux
+    - env: TARGET=aarch64-unknown-linux-gnu
+    - env: TARGET=arm-unknown-linux-gnueabi
+    - env: TARGET=armv7-unknown-linux-gnueabihf
+    - env: TARGET=i686-unknown-linux-gnu
+    - env: TARGET=i686-unknown-linux-musl
+    - env: TARGET=mips-unknown-linux-gnu
+    - env: TARGET=mips64-unknown-linux-gnuabi64
+    - env: TARGET=mips64el-unknown-linux-gnuabi64
+    - env: TARGET=mipsel-unknown-linux-gnu
+    - env: TARGET=powerpc-unknown-linux-gnu
+    - env: TARGET=powerpc64-unknown-linux-gnu
+    - env: TARGET=powerpc64le-unknown-linux-gnu
+    - env: TARGET=s390x-unknown-linux-gnu DISABLE_TESTS=1
+    - env: TARGET=x86_64-unknown-linux-gnu
+    - env: TARGET=x86_64-unknown-linux-musl
+
+    # OSX
+    - env: TARGET=i686-apple-darwin
+      os: osx
+    - env: TARGET=x86_64-apple-darwin
+      os: osx
+
+    # *BSD
+    - env: TARGET=i686-unknown-freebsd DISABLE_TESTS=1
+    - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
+    - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
+
+    # Windows
+    - env: TARGET=x86_64-pc-windows-gnu
+
+before_install:
+  - set -e
+  - rustup self update
+
+install:
+  - sh ci/install.sh
+  - source ~/.cargo/env || true
+
+script:
+  - bash ci/script.sh
+
+after_script: set +e
+
+before_deploy:
+  - sh ci/before_deploy.sh
+
+deploy:
+  api_key:
+    secure: NRazS54YDCGpBCyA7AOg0xDQTkz4n1VaE4NF7GpsqHFFL87JCgPD7ojt0k5sE7paIpZA5ABta2S0EgoGXBcxgNKRWCdtTqIvd+KKhweJl6qVgr2uKeXV3BUSpOCw4urrf2Tax/hTh+jK88XBSIy85Jnwm0vzExyANdiu/3n30nqMNCZw4D/hg6NQYBzPlbU0FOVz1i6OzSjBhJuF/raUX5XywuMNF6RuNzJeSEzbV3e0K6dOuAXMYGdue5QNlgodUiefeaZSY0MG43K+mwZJYe013C2XwGaubrePKR2RMTxcnIGVsQH4Mgh8PTWymZUke/J2MXs/gSzocQp6ATcZHVk3gtgkOoO2YhONanByZZrfTCNmXKxdrOqM+oeC4L1FuOmHlVDLKhdCH5gOvSo4215la7AdpmY/+IzbK33jIQQdDMV8S1ChpZTitOTtiV533oo+zcT3yhI3TgLz09Uga0kuEqMGM512oQkjCgDrANDfBX3GR/PMrgr64+zIqPzq0HKksXnMgtgCeD44Lkfk0bBxA6+lIFJLLWIuPU1SHsSQ6KWRDJBXFvelajszNU/b31oHYf3mtz/of+vuKv/iL8t0XkMSQjdN9GCNNVV2aHejOudCKjCCoAawyJ7Z22rrNugu4+r7Wxhf7syTOpAv3shzjtIP/liUG6Snq3PGGBg=
+
+  file_glob: true
+  file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
+  on:
+    condition: $TRAVIS_RUST_VERSION = stable
+    tags: true
+  provider: releases
+  skip_cleanup: true
+
+cache: cargo
+before_cache:
+  # Travis can't cache files that are not readable by "others"
+  - chmod -R a+r $HOME/.cargo
+
+branches:
+  only:
+    # release tags
+    - /^\d+\.\d+\.\d+.*$/
+    - master
+
+notifications:
+  email:
+    on_success: never
