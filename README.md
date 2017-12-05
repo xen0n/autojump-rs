@@ -95,6 +95,12 @@ matter.) However, as the author is developing and using this on Linux, other
 platforms may need a little more love, although all the libraries used are
 lovingly cross-platform. (Patches are welcome, of course!)
 
+The Windows batch files shipped with the original `autojump` has Python
+hard-coded into them, and obviously that won't work with `autojump-rs`.
+Use the batch files in the `windows` directory instead; just replacing the
+original files and putting `autojump.exe` along with them should work.
+(Thanks @tomv564 for the Windows testing!)
+
 That said, there're some IMO very minor deviations from the original Python
 implementation. These are:
 
