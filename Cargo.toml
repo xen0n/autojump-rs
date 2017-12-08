@@ -11,7 +11,7 @@ build = "build.rs"
 
 
 [features]
-default = ["nightly"]
+default = []
 nightly = []
 
 
