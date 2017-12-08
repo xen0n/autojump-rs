@@ -33,6 +33,16 @@ fn detect_smartcase(needles: &[&str]) -> bool {
 }
 
 
+// Iterator sadness...
+macro_rules! filter_path_with_re {
+    ($l: expr, $re: expr) => {
+        $l
+            .iter()
+            .filter(move |&p| $re.is_match(p.as_ref().to_string_lossy().to_mut()))
+    };
+}
+
+
 impl<'a> Matcher<'a> {
     pub fn new_smartcase(needles: Vec<&'a str>) -> Matcher<'a> {
         let ignore_case = detect_smartcase(&needles);
@@ -53,22 +63,25 @@ impl<'a> Matcher<'a> {
         }
     }
 
+
+    #[cfg(feature = "nightly")]
     pub fn execute<'p, P>(&'a self, haystack: &'p [P]) -> impl iter::Iterator<Item = &'p P> + 'a
         where P: AsRef<path::Path>,
               'p: 'a
     {
-        // Iterator sadness...
-        macro_rules! filter_path_with_re {
-            ($l: expr, $re: expr) => {
-                $l
-                    .iter()
-                    .filter(move |&p| $re.is_match(p.as_ref().to_string_lossy().to_mut()))
-            };
-        }
-
-
         filter_path_with_re!(haystack, self.re_consecutive)
             .chain(self.fuzzy_matcher.filter_path(haystack))
             .chain(filter_path_with_re!(haystack, self.re_anywhere))
+    }
+
+
+    #[cfg(not(feature = "nightly"))]
+    pub fn execute<'p, P>(&'a self, haystack: &'p [P]) -> Box<iter::Iterator<Item = &'p P> + 'a>
+        where P: AsRef<path::Path>,
+              'p: 'a
+    {
+        Box::new(filter_path_with_re!(haystack, self.re_consecutive)
+            .chain(self.fuzzy_matcher.filter_path(haystack))
+            .chain(filter_path_with_re!(haystack, self.re_anywhere)))
     }
 }
