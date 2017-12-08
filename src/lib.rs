@@ -1,4 +1,4 @@
-#![feature(conservative_impl_trait)]
+#![cfg_attr(feature = "nightly", feature(conservative_impl_trait))]
 
 extern crate atomicwrites;
 extern crate docopt;
