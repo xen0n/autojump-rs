@@ -47,9 +47,6 @@ matrix:
     - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
     - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
 
-    # Windows
-    - env: TARGET=x86_64-pc-windows-gnu
-
 before_install:
   - set -e
   - rustup self update
@@ -82,12 +79,6 @@ cache: cargo
 before_cache:
   # Travis can't cache files that are not readable by "others"
   - chmod -R a+r $HOME/.cargo
-
-branches:
-  only:
-    # release tags
-    - /^\d+\.\d+\.\d+.*$/
-    - master
 
 notifications:
   email:
