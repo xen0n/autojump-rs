@@ -22,6 +22,7 @@ fn re_escape(s: &str) -> String {
     for ch in s.chars() {
         match ch {
             '0'...'9' | 'A'...'Z' | 'a'...'z' | '_' | '/' => result.push(ch),
+            '\\' => result.push_str(r"\\"),
             _ => {
                 result.push_str(r"\x");
                 // skip the r"\u" prefix and take the remaining "{xxxx}" part
