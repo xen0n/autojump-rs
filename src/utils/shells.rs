@@ -1,6 +1,7 @@
 use std::env;
 
 
+#[cfg(not(windows))]
 pub fn is_autojump_sourced() -> bool {
     match env::var("AUTOJUMP_SOURCED") {
         Ok(s) => s == "1",
