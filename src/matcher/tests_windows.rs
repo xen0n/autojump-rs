@@ -53,9 +53,9 @@ fn test_re_match_consecutive() {
         };
     }
 
-    a!(["foo"], r"foo[^/]*$");
-    a!(["foo", "baz"], r"foo[^/]*/[^/]*baz[^/]*$");
-    a!(["测试", "baz"], r"\x{6d4b}\x{8bd5}[^/]*/[^/]*baz[^/]*$");
+    a!(["foo"], r"foo[^\\]*$");
+    a!(["foo", "baz"], r"foo[^\\]*\\[^\\]*baz[^\\]*$");
+    a!(["测试", "baz"], r"\x{6d4b}\x{8bd5}[^\\]*\\[^\\]*baz[^\\]*$");
 }
 
 
@@ -78,17 +78,17 @@ fn test_fuzzy() {
     a!(
         "foo",
         [
-            "/fow/bar",
-            "/bar/foo",
-            "/bar/fooow",
-            "/fuzzy",
-            "/moo/foo/baz",
-            "/foo/ooofoo",
+            "\\fow\\bar",
+            "\\bar\\foo",
+            "\\bar\\fooow",
+            "\\fuzzy",
+            "\\moo\\foo\\baz",
+            "\\foo\\ooofoo",
         ],
         [
-            "/bar/foo",
-            "/bar/fooow",
-            "/foo/ooofoo",
+            "\\bar\\foo",
+            "\\bar\\fooow",
+            "\\foo\\ooofoo",
         ]);
 }
 
@@ -99,27 +99,27 @@ fn test_matcher() {
     let matcher = Matcher::new(needles, false);
 
     let haystack = vec![
-        path::Path::new("/foo/bar/baz"),
-        path::Path::new("/moo/foo/baz"),
-        path::Path::new("/baz/foo/bar"),
-        path::Path::new("/moo/baz/foo"),
-        path::Path::new("/foo/baz"),
+        path::Path::new("\\foo\\bar\\baz"),
+        path::Path::new("\\moo\\foo\\baz"),
+        path::Path::new("\\baz\\foo\\bar"),
+        path::Path::new("\\moo\\baz\\foo"),
+        path::Path::new("\\foo\\baz"),
     ];
 
     let actual: Vec<_> = matcher.execute(&haystack).collect();
     let expected = vec![
         // consecutive matcher
-        path::Path::new("/moo/foo/baz"),
-        path::Path::new("/foo/baz"),
+        path::Path::new("\\moo\\foo\\baz"),
+        path::Path::new("\\foo\\baz"),
         // fuzzy matcher
-        path::Path::new("/foo/bar/baz"),
-        path::Path::new("/moo/foo/baz"),
-        path::Path::new("/baz/foo/bar"),
-        path::Path::new("/foo/baz"),
+        path::Path::new("\\foo\\bar\\baz"),
+        path::Path::new("\\moo\\foo\\baz"),
+        path::Path::new("\\baz\\foo\\bar"),
+        path::Path::new("\\foo\\baz"),
         // anywhere matcher
-        path::Path::new("/foo/bar/baz"),
-        path::Path::new("/moo/foo/baz"),
-        path::Path::new("/foo/baz"),
+        path::Path::new("\\foo\\bar\\baz"),
+        path::Path::new("\\moo\\foo\\baz"),
+        path::Path::new("\\foo\\baz"),
     ];
     assert_eq!(actual.len(), expected.len());
     for (i, j) in expected.into_iter().zip(actual.into_iter()) {

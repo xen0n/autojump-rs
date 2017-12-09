@@ -1,8 +1,6 @@
-use std;
 use docopt;
 
 use super::super::Config;
-use super::super::utils;
 use super::{manip, purge, query, stat};
 
 
@@ -55,6 +53,9 @@ struct Args {
 
 #[cfg(not(windows))]
 fn check_if_sourced() {
+    use std;
+    use super::super::utils;
+
     if !utils::is_autojump_sourced() {
         println!("Please source the correct autojump file in your shell's");
         println!("startup file. For more information, please reinstall autojump");

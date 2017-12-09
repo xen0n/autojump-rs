@@ -17,7 +17,7 @@ main() {
 
     test -f Cargo.lock || cargo generate-lockfile
 
-    cross rustc --bin autojump --target $TARGET --release -- -C lto
+    cross rustc --features nightly --bin autojump --target $TARGET --release -- -C lto
 
     cp target/$TARGET/release/autojump $stage/
 

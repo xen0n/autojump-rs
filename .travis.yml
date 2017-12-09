@@ -12,6 +12,14 @@ env:
 
 matrix:
   include:
+    # OSX
+    # HACK: open-source jobs on OSX take VERY long time just to start, so just
+    # get up earlier like when you're attending a live or so
+    - env: TARGET=i686-apple-darwin
+      os: osx
+    - env: TARGET=x86_64-apple-darwin
+      os: osx
+
     # Android
     - env: TARGET=aarch64-linux-android DISABLE_TESTS=1
     - env: TARGET=arm-linux-androideabi DISABLE_TESTS=1
@@ -36,19 +44,15 @@ matrix:
     - env: TARGET=x86_64-unknown-linux-gnu
     - env: TARGET=x86_64-unknown-linux-musl
 
-    # OSX
-    - env: TARGET=i686-apple-darwin
-      os: osx
-    - env: TARGET=x86_64-apple-darwin
-      os: osx
-
     # *BSD
     - env: TARGET=i686-unknown-freebsd DISABLE_TESTS=1
     - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
     - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
 
-    # Windows
-    - env: TARGET=x86_64-pc-windows-gnu
+  # netbsd currently doesn't build (because of nix-0.9.0)
+  env:  # important: https://docs.travis-ci.com/user/customizing-the-build/#rows-that-are-allowed-to-fail
+  allow_failures:
+      - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
 
 before_install:
   - set -e
@@ -82,12 +86,6 @@ cache: cargo
 before_cache:
   # Travis can't cache files that are not readable by "others"
   - chmod -R a+r $HOME/.cargo
-
-branches:
-  only:
-    # release tags
-    - /^\d+\.\d+\.\d+.*$/
-    - master
 
 notifications:
   email:

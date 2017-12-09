@@ -37,7 +37,8 @@ impl<'a> TabEntryInfo<'a> {
     }
 
     pub fn from_matches(needle: &'a str, matches: &'a [&'a str]) -> Vec<TabEntryInfo<'a>> {
-        matches.iter()
+        matches
+            .iter()
             .enumerate()
             .map(|(i, p)| TabEntryInfo::new(needle, i + 1, p))
             .collect()
@@ -67,14 +68,13 @@ fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEnt
         // "0" => Some(0)
         // "x" => None
         // "01" => Some(0) (first digit)
-        let mut parse_index = |index_s: &str, explicit: bool| {
-            if let Some(ch) = index_s.chars().next() {
+        let mut parse_index =
+            |index_s: &str, explicit: bool| if let Some(ch) = index_s.chars().next() {
                 if let Some(index_u32) = ch.to_digit(10) {
                     index = Some(index_u32 as usize);
                     index_explicit = explicit;
                 }
-            }
-        };
+            };
 
         if let Some(i) = entry.find(separator) {
             let (needle_s, remaining) = entry.split_at(i);

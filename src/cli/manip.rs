@@ -23,7 +23,8 @@ fn decrease_weight(old_w: f64, dec_w: f64) -> f64 {
 
 
 fn do_increase<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
-    where P: AsRef<path::Path>
+where
+    P: AsRef<path::Path>,
 {
     let p = p.as_ref();
 
@@ -51,7 +52,8 @@ fn do_increase<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
 
 
 fn do_increase_and_save<P>(config: &Config, p: P, w: f64) -> Entry
-    where P: AsRef<path::Path>
+where
+    P: AsRef<path::Path>,
 {
     let mut entries = data::load(config);
     let entry = do_increase(&mut entries, p, w);
@@ -61,7 +63,8 @@ fn do_increase_and_save<P>(config: &Config, p: P, w: f64) -> Entry
 
 
 fn do_decrease<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
-    where P: AsRef<path::Path>
+where
+    P: AsRef<path::Path>,
 {
     let p = p.as_ref();
     for ent in entries.iter_mut() {
@@ -75,14 +78,15 @@ fn do_decrease<P>(entries: &mut Vec<Entry>, p: P, w: f64) -> Entry
     // TODO: original impl also adds an entry in case the requested path is
     // absent, but is it desirable?
     // For now let's mimic its behavior...
-    let entry = Entry::new(p, 0.0);  // no need to compare
+    let entry = Entry::new(p, 0.0); // no need to compare
     entries.push(entry.clone());
     entry
 }
 
 
 fn do_decrease_and_save<P>(config: &Config, p: P, w: f64) -> Entry
-    where P: AsRef<path::Path>
+where
+    P: AsRef<path::Path>,
 {
     let mut entries = data::load(config);
     let entry = do_decrease(&mut entries, p, w);
@@ -92,7 +96,8 @@ fn do_decrease_and_save<P>(config: &Config, p: P, w: f64) -> Entry
 
 
 pub fn add<P>(config: &Config, p: P)
-    where P: AsRef<path::Path>
+where
+    P: AsRef<path::Path>,
 {
     do_increase_and_save(config, p, DEFAULT_INCREASE_WEIGHT as f64);
 }
