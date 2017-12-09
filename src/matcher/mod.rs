@@ -1,8 +1,10 @@
 mod fuzzy;
 mod re_based;
 
-#[cfg(test)]
+#[cfg(all(test, not(windows)))]
 mod tests;
+#[cfg(all(test, windows))]
+mod tests_windows;
 
 
 use std::iter;
