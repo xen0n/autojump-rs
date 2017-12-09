@@ -124,11 +124,14 @@ implementation. These are:
     distance][jaro] is computed between every filename and the last part of
     query needles respectively, and results are filtered based on that.
 
-*   `jc` doesn't work correctly at the moment.
+*   `jc` may jump outside current directory.
 
     Exact reason may be different filtering logic involved, but I'm not very
-    sure about this one. I only use plain `j` mostly, so if you're heavily
-    reliant on `jc` and its friends please open an issue!
+    sure about this one. The behavior is also observed on original `autojump`,
+    but the frequency seems to be lower, and both implementations actually
+    don't check if the target is below current directory. However I only use
+    plain `j` mostly, so if you're heavily reliant on `jc` and its friends
+    please open an issue!
 
 
 [rust-argparse]: https://github.com/tailhook/rust-argparse
@@ -141,9 +144,9 @@ implementation. These are:
 ## Future plans
 
 Now that platform support is mostly considered okay, next steps would be
-more refactoring and bug fixing. I once considered Git commit ids in
-release artifact "cool", but I no longer want that now, so that would be
-gone in the next release. And the `jc` bug should also be tackled.
+more refactoring and bug fixing. The `jc` behavior differences are observed
+on original `autojump` too, in that you could jump outside `$(pwd)`, but the
+actual directory jumped to is different; this needs further investigation.
 Hell I even want to write a `fasd` backend too, but I don't presently have
 *that* much free time. Anyway, contributions and bug reports are welcome!
 

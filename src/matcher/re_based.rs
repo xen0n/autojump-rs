@@ -4,7 +4,8 @@ use regex;
 
 
 pub fn prepare_regex<F>(needles: &[&str], f: F, ignore_case: bool) -> regex::Regex
-    where F: Fn(&[&str]) -> String
+where
+    F: Fn(&[&str]) -> String,
 {
     let re = {
         let mut tmp = String::new();
