@@ -13,9 +13,11 @@ fn sanitize_one_needle(needle: &str) -> &str {
 
 
 pub fn sanitize<'a, S>(needles: &'a [S]) -> Vec<&'a str>
-    where S: AsRef<str>
+where
+    S: AsRef<str>,
 {
-    needles.iter()
+    needles
+        .iter()
         .map(|s| s.as_ref())
         .map(sanitize_one_needle)
         .collect()

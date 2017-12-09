@@ -68,8 +68,9 @@ impl<'a> Matcher<'a> {
 
     #[cfg(feature = "nightly")]
     pub fn execute<'p, P>(&'a self, haystack: &'p [P]) -> impl iter::Iterator<Item = &'p P> + 'a
-        where P: AsRef<path::Path>,
-              'p: 'a
+    where
+        P: AsRef<path::Path>,
+        'p: 'a,
     {
         filter_path_with_re!(haystack, self.re_consecutive)
             .chain(self.fuzzy_matcher.filter_path(haystack))
@@ -79,11 +80,14 @@ impl<'a> Matcher<'a> {
 
     #[cfg(not(feature = "nightly"))]
     pub fn execute<'p, P>(&'a self, haystack: &'p [P]) -> Box<iter::Iterator<Item = &'p P> + 'a>
-        where P: AsRef<path::Path>,
-              'p: 'a
+    where
+        P: AsRef<path::Path>,
+        'p: 'a,
     {
-        Box::new(filter_path_with_re!(haystack, self.re_consecutive)
-            .chain(self.fuzzy_matcher.filter_path(haystack))
-            .chain(filter_path_with_re!(haystack, self.re_anywhere)))
+        Box::new(
+            filter_path_with_re!(haystack, self.re_consecutive)
+                .chain(self.fuzzy_matcher.filter_path(haystack))
+                .chain(filter_path_with_re!(haystack, self.re_anywhere)),
+        )
     }
 }

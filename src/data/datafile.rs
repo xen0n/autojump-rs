@@ -10,14 +10,14 @@ use super::super::Config;
 use super::entry::Entry;
 
 
-const BACKUP_THRESHOLD: u64 = 24 * 60 * 60;  // 1 d
+const BACKUP_THRESHOLD: u64 = 24 * 60 * 60; // 1 d
 
 
 #[cfg(target_os = "macos")]
 fn migrate_osx_xdg_data(config: &Config) -> io::Result<()> {
     let xdg_aj_home = super::super::xdg_home_hardcoded();
     if !xdg_aj_home.exists() {
-        return Ok(())
+        return Ok(());
     }
 
     let old_config = Config::from_prefix(&xdg_aj_home);
@@ -102,10 +102,12 @@ fn load_backup(config: &Config) -> Vec<Entry> {
 fn save_to(file: &fs::File, data: &[Entry]) -> io::Result<()> {
     let mut writer = io::BufWriter::new(file);
     for entry in data.iter() {
-        writeln!(&mut writer,
-                 "{}\t{}",
-                 entry.weight,
-                 entry.path.to_string_lossy())?;
+        writeln!(
+            &mut writer,
+            "{}\t{}",
+            entry.weight,
+            entry.path.to_string_lossy()
+        )?;
     }
 
     Ok(())
