@@ -31,7 +31,6 @@ macro_rules! assert_re {
 }
 
 
-#[cfg(unix)]
 #[test]
 fn test_re_match_anywhere() {
     macro_rules! a {
@@ -46,7 +45,6 @@ fn test_re_match_anywhere() {
 }
 
 
-#[cfg(unix)]
 #[test]
 fn test_re_match_consecutive() {
     macro_rules! a {
@@ -61,7 +59,6 @@ fn test_re_match_consecutive() {
 }
 
 
-#[cfg(unix)]
 #[test]
 fn test_fuzzy() {
     macro_rules! a {
