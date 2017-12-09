@@ -1,4 +1,4 @@
-# autojump-rs  [![Crates.io version](https://img.shields.io/crates/v/autojump.svg)][cratesio] [![Crates.io downloads](https://img.shields.io/crates/dv/autojump.svg)][cratesio] [![Crates.io license](https://img.shields.io/crates/l/autojump.svg)](LICENSE) [![Travis build status](https://img.shields.io/travis/xen0n/autojump-rs/develop.svg)][travis] [![AppVeyor build status](https://img.shields.io/appveyor/ci/xen0n/autojump-rs/develop.svg)][appveyor]
+# autojump-rs  [![Crates.io version](https://img.shields.io/crates/v/autojump.svg)][cratesio] [![Crates.io downloads](https://img.shields.io/crates/dv/autojump.svg)][cratesio] [![Crates.io license](https://img.shields.io/crates/l/autojump.svg)](LICENSE) [![Travis build status](https://img.shields.io/travis/xen0n/autojump-rs/develop.svg?label=travis)][travis] [![AppVeyor build status](https://img.shields.io/appveyor/ci/xen0n/autojump-rs/develop.svg?logo=appveyor)][appveyor]
 
 A port of the wildly popular helper application [`autojump`][aj] to Rust.
 
