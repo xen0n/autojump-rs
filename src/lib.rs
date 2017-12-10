@@ -23,4 +23,4 @@ pub use self::config::*;
 pub const VERSION_TRACK: &'static str = "22.5.0";
 
 /// The library's version.
-pub const VERSION: &'static str = "0.3.0";
+pub const VERSION: &'static str = "0.3.1";
