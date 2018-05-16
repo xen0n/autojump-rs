@@ -1,4 +1,3 @@
-#![cfg_attr(feature = "nightly", feature(conservative_impl_trait))]
 #![deny(warnings)]
 
 extern crate atomicwrites;
