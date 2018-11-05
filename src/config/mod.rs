@@ -1,4 +1,3 @@
-use std::env;
 use std::path;
 
 
@@ -11,7 +10,7 @@ pub struct Config {
 
 #[cfg(unix)]
 fn home_dir() -> path::PathBuf {
-    match env::home_dir() {
+    match dirs::home_dir() {
         Some(p) => p,
         // be consistent with Python's `os.path.expand_user('~')`
         None => path::PathBuf::from("/"),
