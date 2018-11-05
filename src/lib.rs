@@ -1,3 +1,6 @@
+// FIXME: this can be removed with Rust 2018
+#![feature(nll)]
+
 #![deny(warnings)]
 
 extern crate atomicwrites;
@@ -20,7 +23,7 @@ pub use self::config::*;
 
 
 /// The version of original `autojump` this library is compatible with.
-pub const VERSION_TRACK: &'static str = "22.5.0";
+pub const VERSION_TRACK: &str = "22.5.0";
 
 /// The library's version.
-pub const VERSION: &'static str = "0.3.1";
+pub const VERSION: &str = "0.3.1";

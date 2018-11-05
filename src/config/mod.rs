@@ -52,6 +52,7 @@ fn data_home() -> path::PathBuf {
 
 #[cfg(windows)]
 fn data_home() -> path::PathBuf {
+    use std::env;
     // `%APPDATA%` is always present on Windows, unless someone actually
     // decided to remove it in Control Panel. We wouldn't want to support
     // those people indeed...
@@ -69,19 +70,8 @@ impl Config {
 
     pub fn from_prefix(data_home: &path::Path) -> Config {
         let data_home = data_home.to_path_buf();
-        let data_path;
-        let backup_path;
-
-        // for pleasing the borrow checker
-        {
-            let data_path_join = |s| {
-                let mut tmp = data_home.clone();
-                tmp.push(s);
-                tmp
-            };
-            data_path = data_path_join("autojump.txt");
-            backup_path = data_path_join("autojump.txt.bak");
-        }
+        let data_path = data_home.join("autojump.txt");
+        let backup_path = data_home.join("autojump.txt.bak");
 
         Config {
             prefix: data_home,
