@@ -1,6 +1,3 @@
-// FIXME: this can be removed with Rust 2018
-#![feature(nll)]
-
 #![deny(warnings)]
 
 extern crate atomicwrites;

@@ -57,52 +57,55 @@ fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEnt
     let mut index_explicit = false;
     let mut path = None;
 
-    // "0" => Some(0)
-    // "x" => None
-    // "01" => Some(0) (first digit)
-    let mut parse_index = |index_s: &str, explicit: bool| {
-        if let Some(ch) = index_s.chars().next() {
-            if let Some(index_u32) = ch.to_digit(10) {
-                index = Some(index_u32 as usize);
-                index_explicit = explicit;
+    // FIXME: remove this scope when nll is ready.
+    {
+        // "0" => Some(0)
+        // "x" => None
+        // "01" => Some(0) (first digit)
+        let mut parse_index = |index_s: &str, explicit: bool| {
+            if let Some(ch) = index_s.chars().next() {
+                if let Some(index_u32) = ch.to_digit(10) {
+                    index = Some(index_u32 as usize);
+                    index_explicit = explicit;
+                }
             }
-        }
-    };
+        };
 
-    if let Some(i) = entry.find(separator) {
-        let (needle_s, remaining) = entry.split_at(i);
-        let (_, remaining) = remaining.split_at(separator.len());
+        if let Some(i) = entry.find(separator) {
+            let (needle_s, remaining) = entry.split_at(i);
+            let (_, remaining) = remaining.split_at(separator.len());
 
-        needle = Some(needle_s);
+            needle = Some(needle_s);
 
-        // It seems the index part is a single digit according to the
-        // original implementation.
-        if let Some(i) = remaining.find(separator) {
-            // Path part is present.
-            let (index_s, path_s) = remaining.split_at(i);
-            let (_, path_s) = path_s.split_at(separator.len());
+            // It seems the index part is a single digit according to the
+            // original implementation.
+            if let Some(i) = remaining.find(separator) {
+                // Path part is present.
+                let (index_s, path_s) = remaining.split_at(i);
+                let (_, path_s) = path_s.split_at(separator.len());
 
-            // Parse the index part.
-            parse_index(index_s, true);
+                // Parse the index part.
+                parse_index(index_s, true);
 
-            // Pass-through the path part.
-            path = Some(path_s);
-        } else {
-            // Handle "foo__" as if the missing index is 1.
-            // Put the logic here for better locality (the original impl has
-            // it in the driver script).
-            if remaining.len() == 0 {
-                // fxxk the borrow checker
-                // index = Some(1);
-                parse_index("1", false);
+                // Pass-through the path part.
+                path = Some(path_s);
             } else {
-                // Only the index part is present.
-                parse_index(remaining, true);
+                // Handle "foo__" as if the missing index is 1.
+                // Put the logic here for better locality (the original impl has
+                // it in the driver script).
+                if remaining.len() == 0 {
+                    // fxxk the borrow checker
+                    // index = Some(1);
+                    parse_index("1", false);
+                } else {
+                    // Only the index part is present.
+                    parse_index(remaining, true);
+                }
             }
+        } else {
+            // No separators at all, the original implementation returned all
+            // None's.
         }
-    } else {
-        // No separators at all, the original implementation returned all
-        // None's.
     }
 
     TabEntryInfo {

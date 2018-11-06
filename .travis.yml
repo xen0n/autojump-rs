@@ -3,7 +3,6 @@
 
 dist: trusty
 language: rust
-    - nightly
 services: docker
 sudo: required
 
@@ -78,7 +77,7 @@ deploy:
   file_glob: true
   file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
   on:
-    condition: $TRAVIS_RUST_VERSION = nightly
+    condition: $TRAVIS_RUST_VERSION = stable
     tags: true
   provider: releases
   skip_cleanup: true
