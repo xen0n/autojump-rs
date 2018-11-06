@@ -10,6 +10,7 @@ pub struct Config {
 
 #[cfg(unix)]
 fn home_dir() -> path::PathBuf {
+    use dirs;
     match dirs::home_dir() {
         Some(p) => p,
         // be consistent with Python's `os.path.expand_user('~')`
@@ -32,6 +33,7 @@ pub fn xdg_home_hardcoded() -> path::PathBuf {
 // TODO: is this cfg appropriate for *all* Unix platforms, especially BSD?
 #[cfg(all(unix, not(target_os = "macos")))]
 fn data_home() -> path::PathBuf {
+    use std::env;
     // Use $XDG_DATA_HOME if defined, ~/.local/share/autojump otherwise.
     if let Some(home_s) = env::var_os("XDG_DATA_HOME") {
         path::PathBuf::from(home_s)
