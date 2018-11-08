@@ -1,6 +1,5 @@
 use std::fmt;
 
-
 #[derive(PartialEq, Eq, Debug)]
 pub struct TabEntryInfo<'a> {
     pub needle: Option<&'a str>,
@@ -8,7 +7,6 @@ pub struct TabEntryInfo<'a> {
     pub index_explicit: bool,
     pub path: Option<&'a str>,
 }
-
 
 impl<'a> fmt::Display for TabEntryInfo<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -24,7 +22,6 @@ impl<'a> fmt::Display for TabEntryInfo<'a> {
         Ok(())
     }
 }
-
 
 impl<'a> TabEntryInfo<'a> {
     fn new(needle: &'a str, index: usize, path: &'a str) -> TabEntryInfo<'a> {
@@ -45,7 +42,6 @@ impl<'a> TabEntryInfo<'a> {
     }
 }
 
-
 /// Given a tab entry in the following format return needle, index, and path:
 ///
 /// ```ignore
@@ -55,26 +51,25 @@ pub fn get_tab_entry_info<'a>(entry: &'a str) -> TabEntryInfo<'a> {
     get_tab_entry_info_internal(entry, "__")
 }
 
-
 fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEntryInfo<'a> {
     let mut needle = None;
     let mut index = None;
     let mut index_explicit = false;
     let mut path = None;
 
-    // extra scope needed to make `parse_index` and final return play well
-    // together
+    // FIXME: remove this scope when nll is ready.
     {
         // "0" => Some(0)
         // "x" => None
         // "01" => Some(0) (first digit)
-        let mut parse_index =
-            |index_s: &str, explicit: bool| if let Some(ch) = index_s.chars().next() {
+        let mut parse_index = |index_s: &str, explicit: bool| {
+            if let Some(ch) = index_s.chars().next() {
                 if let Some(index_u32) = ch.to_digit(10) {
                     index = Some(index_u32 as usize);
                     index_explicit = explicit;
                 }
-            };
+            }
+        };
 
         if let Some(i) = entry.find(separator) {
             let (needle_s, remaining) = entry.split_at(i);
@@ -114,18 +109,16 @@ fn get_tab_entry_info_internal<'a>(entry: &'a str, separator: &'a str) -> TabEnt
     }
 
     TabEntryInfo {
-        needle: needle,
-        index: index,
-        index_explicit: index_explicit,
-        path: path,
+        needle,
+        index,
+        index_explicit,
+        path,
     }
 }
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
 
     macro_rules! assert_tab_entry_info {
         ($input: expr, $needle: expr, $index: expr, $explicit: expr, $path: expr) => {
@@ -139,14 +132,12 @@ mod tests {
         };
     }
 
-
     #[test]
     fn test_tab_entry_info_parse_wellformed() {
         assert_tab_entry_info!("", None, None, false, None);
         assert_tab_entry_info!("a__0", Some("a"), Some(0), true, None);
         assert_tab_entry_info!("a__0__b", Some("a"), Some(0), true, Some("b"));
     }
-
 
     #[test]
     fn test_tab_entry_info_parse_malformed() {

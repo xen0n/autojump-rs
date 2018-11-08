@@ -1,4 +1,3 @@
-use std::env;
 use std::path;
 
 
@@ -11,7 +10,8 @@ pub struct Config {
 
 #[cfg(unix)]
 fn home_dir() -> path::PathBuf {
-    match env::home_dir() {
+    use dirs;
+    match dirs::home_dir() {
         Some(p) => p,
         // be consistent with Python's `os.path.expand_user('~')`
         None => path::PathBuf::from("/"),
@@ -33,6 +33,7 @@ pub fn xdg_home_hardcoded() -> path::PathBuf {
 // TODO: is this cfg appropriate for *all* Unix platforms, especially BSD?
 #[cfg(all(unix, not(target_os = "macos")))]
 fn data_home() -> path::PathBuf {
+    use std::env;
     // Use $XDG_DATA_HOME if defined, ~/.local/share/autojump otherwise.
     if let Some(home_s) = env::var_os("XDG_DATA_HOME") {
         path::PathBuf::from(home_s)
@@ -53,6 +54,7 @@ fn data_home() -> path::PathBuf {
 
 #[cfg(windows)]
 fn data_home() -> path::PathBuf {
+    use std::env;
     // `%APPDATA%` is always present on Windows, unless someone actually
     // decided to remove it in Control Panel. We wouldn't want to support
     // those people indeed...
@@ -70,19 +72,8 @@ impl Config {
 
     pub fn from_prefix(data_home: &path::Path) -> Config {
         let data_home = data_home.to_path_buf();
-        let data_path;
-        let backup_path;
-
-        // for pleasing the borrow checker
-        {
-            let data_path_join = |s| {
-                let mut tmp = data_home.clone();
-                tmp.push(s);
-                tmp
-            };
-            data_path = data_path_join("autojump.txt");
-            backup_path = data_path_join("autojump.txt.bak");
-        }
+        let data_path = data_home.join("autojump.txt");
+        let backup_path = data_home.join("autojump.txt.bak");
 
         Config {
             prefix: data_home,

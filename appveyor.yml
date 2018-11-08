@@ -3,7 +3,7 @@
 
 environment:
   global:
-    RUST_VERSION: nightly-2017-12-05
+    RUST_VERSION: nightly
     CRATE_NAME: autojump
 
   matrix:
@@ -40,7 +40,7 @@ deploy:
     secure: wstWtOl7e6TUnwU5KKd84jDXBflG4UHQJlrpQmvHqiMvRhJlX019zac+TD0itTu4
   description: ''
   on:
-    RUST_VERSION: nightly-2017-12-05
+    RUST_VERSION: nightly
     appveyor_repo_tag: true
   provider: GitHub
 

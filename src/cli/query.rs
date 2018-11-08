@@ -1,13 +1,11 @@
 use std::env;
-use std::iter;
 use std::path;
 
-use super::super::Config;
 use super::super::data;
 use super::super::matcher::Matcher;
 use super::super::utils;
 use super::super::utils::TabEntryInfo;
-
+use super::super::Config;
 
 struct QueryConfig<'a> {
     needles: Vec<&'a str>,
@@ -17,12 +15,10 @@ struct QueryConfig<'a> {
     use_fallback: bool,
 }
 
-
 enum Query<'a> {
     Execute(QueryConfig<'a>),
     EarlyResult(path::PathBuf),
 }
-
 
 pub fn complete(config: &Config, needles: Vec<String>) {
     // Override needles to only consider the first entry (if present).
@@ -60,7 +56,6 @@ pub fn complete(config: &Config, needles: Vec<String>) {
     }
 }
 
-
 pub fn query(config: &Config, needles: Vec<String>) {
     let needles: Vec<_> = needles.iter().map(|s| s.as_str()).collect();
     let result = match prepare_query(&needles, true, 1, true) {
@@ -69,7 +64,6 @@ pub fn query(config: &Config, needles: Vec<String>) {
     };
     println!("{}", result.to_string_lossy());
 }
-
 
 fn prepare_query<'a>(
     needles: &'a [&'a str],
@@ -120,20 +114,17 @@ fn prepare_query<'a>(
     })
 }
 
-
 fn do_query<'a>(config: &Config, query: QueryConfig<'a>) -> Vec<path::PathBuf> {
     let needles = query.needles;
     let check_existence = query.check_existence;
     let index = query.index;
     let count = query.count;
 
-    let entries = {
-        let mut tmp = data::load(config);
-        // Default order is ascending, but apparently we want to match the
-        // other way around.
-        tmp.sort_by(|a, b| b.cmp(a));
-        tmp
-    };
+    let mut entries = data::load(config);
+    // Default order is ascending, but apparently we want to match the
+    // other way around.
+    entries.sort_by(|a, b| b.cmp(a));
+
     let matcher = Matcher::new_smartcase(needles);
     let result = matcher.execute(&entries);
 
@@ -142,27 +133,28 @@ fn do_query<'a>(config: &Config, query: QueryConfig<'a>) -> Vec<path::PathBuf> {
         Ok(cwd) => Some(cwd),
         Err(_) => None,
     };
-    let result = result
-        .filter(|p| if cwd.is_some() {
-            &p.path != cwd.as_ref().unwrap()
-        } else {
-            true
+    let mut result: Vec<_> = result
+        .filter(|p| {
+            if let Some(cwd) = &cwd {
+                &p.path != cwd
+            } else {
+                true
+            }
         })
-        .filter(|p| if check_existence {
-            p.path.exists()
-        } else {
-            true
-        });
-
-    // Always return something for shell in case index is out-of-bounds.
-    let fallback = iter::once(path::Path::new(".").to_path_buf());
-
-    let result = result.skip(index).take(count).map(|p| p.path.clone());
-    let result: Vec<_> = if query.use_fallback {
-        result.chain(fallback).collect()
-    } else {
-        result.collect()
-    };
+        .filter(|p| {
+            if check_existence {
+                p.path.exists()
+            } else {
+                true
+            }
+        })
+        .skip(index)
+        .take(count)
+        .map(|p| p.path.clone())
+        .collect();
+    if query.use_fallback {
+        result.push(".".into())
+    }
 
     result
 }

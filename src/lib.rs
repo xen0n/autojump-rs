@@ -7,6 +7,7 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate strsim;
+extern crate dirs;
 
 pub mod cli;
 pub mod config;
@@ -19,7 +20,7 @@ pub use self::config::*;
 
 
 /// The version of original `autojump` this library is compatible with.
-pub const VERSION_TRACK: &'static str = "22.5.0";
+pub const VERSION_TRACK: &str = "22.5.0";
 
 /// The library's version.
-pub const VERSION: &'static str = "0.3.1";
+pub const VERSION: &str = "0.3.1";
