@@ -5,7 +5,7 @@ fn sanitize_one_needle(needle: &str) -> &str {
     if needle == path::MAIN_SEPARATOR.to_string() {
         needle
     } else {
-        needle.trim_right_matches(path::MAIN_SEPARATOR)
+        needle.trim_end_matches(path::MAIN_SEPARATOR)
     }
 }
 

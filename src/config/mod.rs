@@ -10,7 +10,6 @@ pub struct Config {
 
 #[cfg(unix)]
 fn home_dir() -> path::PathBuf {
-    use dirs;
     match dirs::home_dir() {
         Some(p) => p,
         // be consistent with Python's `os.path.expand_user('~')`

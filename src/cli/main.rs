@@ -53,7 +53,6 @@ struct Args {
 
 #[cfg(not(windows))]
 fn check_if_sourced() {
-    use std;
     use super::super::utils;
 
     if !utils::is_autojump_sourced() {
