@@ -7,6 +7,7 @@ repository = "https://github.com/xen0n/autojump-rs"
 readme = "README.md"
 license = "GPL-3.0+"
 include = ["src/**/*.rs", "Cargo.toml"]
+edition = "2018"
 
 
 [features]
