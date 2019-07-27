@@ -1,53 +1,17 @@
-use docopt;
+use clap::{App, Arg};
 
 use super::super::Config;
 use super::{manip, purge, query, stat};
 
 
-const USAGE: &'static str = "
-Automatically jump to directory passed as an argument.
-
-Usage:
-  autojump [<dir>...]
-  autojump --complete [<dir>...]
-  autojump --purge
-  autojump (-a <dir> | --add <dir>)
-  autojump (-i | --increase) [<weight>]
-  autojump (-d | --decrease) [<weight>]
-  autojump (-s | --stat)
-  autojump (-h | --help)
-  autojump (-v | --version)
-
-
-Positional arguments:
-  DIR                          directory to jump to
-  WEIGHT                       weight to increase/decrease for current dir
-
-Optional arguments:
-  -h, --help                   show this help message and exit
-  -a DIR, --add DIR            add path
-  -i, --increase               increase current directory weight, default 10
-  -d, --decrease               decrease current directory weight, default 15
-  --complete                   used for tab completion
-  --purge                      remove non-existent paths from database
-  -s, --stat                   show database entries and their key weights
-  -v, --version                show version information
-
-Please see autojump(1) man pages for full documentation.
-";
-
-
-#[derive(Deserialize)]
 struct Args {
     arg_dir: Vec<String>,
-    arg_weight: Option<isize>,
     flag_complete: bool,
     flag_purge: bool,
     flag_add: Option<String>,
-    flag_increase: bool,
-    flag_decrease: bool,
+    flag_increase: Option<Option<isize>>,
+    flag_decrease: Option<Option<isize>>,
     flag_stat: bool,
-    flag_version: bool,
 }
 
 
@@ -73,9 +37,80 @@ fn check_if_sourced() {
 pub fn main(version_str: String) {
     check_if_sourced();
 
-    let args: Args = docopt::Docopt::new(USAGE)
-        .and_then(|d| d.deserialize())
-        .unwrap_or_else(|e| e.exit());
+    let args: Args = {
+        let app = App::new("autojump-rs")
+            .version(version_str.as_str())
+            .about("Automatically jump to directory passed as an argument.")
+            .arg(
+                Arg::with_name("dir")
+                    .multiple(true)
+            )
+            .arg(
+                Arg::with_name("add")
+                .short("a")
+                .long("add")
+                .takes_value(true)
+                .value_name("DIR")
+                .help("add path")
+            )
+            .arg(
+                Arg::with_name("complete")
+                .long("complete")
+                .help("used for tab completion")
+            )
+            .arg(
+                Arg::with_name("purge")
+                .long("purge")
+                .help("remove non-existent paths from database")
+            )
+            .arg(
+                Arg::with_name("stat")
+                .short("s")
+                .long("stat")
+                .help("show database entries and their key weights")
+            )
+            .arg(
+                Arg::with_name("increase")
+                .short("i")
+                .long("increase")
+                .takes_value(true)
+                .value_name("WEIGHT")
+                .min_values(0)
+                .help("increase current directory weight, default 10")
+            )
+            .arg(
+                Arg::with_name("decrease")
+                .short("d")
+                .long("decrease")
+                .takes_value(true)
+                .value_name("WEIGHT")
+                .min_values(0)
+                .help("decrease current directory weight, default 15")
+            )
+            .get_matches();
+
+        let flag_increase = if app.is_present("increase") {
+            Some(app.value_of("increase").map(|x| x.parse().unwrap()))
+        } else {
+            None
+        };
+
+        let flag_decrease = if app.is_present("decrease") {
+            Some(app.value_of("decrease").map(|x| x.parse().unwrap()))
+        } else {
+            None
+        };
+
+        Args {
+            arg_dir: app.values_of("dir").map(|x| x.map(|i| i.to_owned()).collect()).unwrap_or(vec![]),
+            flag_complete: app.is_present("complete"),
+            flag_purge: app.is_present("purge"),
+            flag_add: app.value_of("add").map(|x| x.to_owned()),
+            flag_increase: flag_increase,
+            flag_decrease: flag_decrease,
+            flag_stat: app.is_present("stat"),
+        }
+    };
     let config = Config::defaults();
 
     // Process arguments.
@@ -89,12 +124,12 @@ pub fn main(version_str: String) {
         manip::add(&config, args.flag_add.unwrap());
         return;
     }
-    if args.flag_increase {
-        manip::increase(&config, args.arg_weight);
+    if let Some(weight) = args.flag_increase {
+        manip::increase(&config, weight);
         return;
     }
-    if args.flag_decrease {
-        manip::decrease(&config, args.arg_weight);
+    if let Some(weight) = args.flag_decrease {
+        manip::decrease(&config, weight);
         return;
     }
     if args.flag_purge {
@@ -103,10 +138,6 @@ pub fn main(version_str: String) {
     }
     if args.flag_stat {
         stat::print_stat(&config);
-        return;
-    }
-    if args.flag_version {
-        println!("{}", version_str);
         return;
     }
 
