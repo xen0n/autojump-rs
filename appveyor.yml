@@ -1,14 +1,16 @@
-# Based on the "trust" template v0.1.1
-# https://github.com/japaric/trust/tree/v0.1.1
+# Based on the "trust" template v0.1.2
+# https://github.com/japaric/trust/tree/v0.1.2
 
 environment:
   global:
-    RUST_VERSION: nightly-2017-12-05
+    RUST_VERSION: nightly
     CRATE_NAME: autojump
 
   matrix:
     - TARGET: i686-pc-windows-msvc
+      RUST_VERSION: nightly
     - TARGET: x86_64-pc-windows-msvc
+      RUST_VERSION: nightly
 
 install:
   - ps: >-
@@ -26,27 +28,33 @@ install:
 test_script:
   # we don't run the "test phase" when doing deploys
   - if [%APPVEYOR_REPO_TAG%]==[false] (
-      cargo build --features nightly --target %TARGET% &&
+      cargo build --target %TARGET% &&
       cargo test --target %TARGET%
     )
 
 before_deploy:
-  - cargo rustc --features nightly --target %TARGET% --release --bin autojump -- -C lto
+  - cargo rustc --target %TARGET% --release --bin autojump -- -C lto
   - ps: ci\before_deploy.ps1
 
 deploy:
   artifact: /.*\.zip/
   auth_token:
-    secure: wstWtOl7e6TUnwU5KKd84jDXBflG4UHQJlrpQmvHqiMvRhJlX019zac+TD0itTu4
+    secure: GcA+5ic3SEqiNovkdYNOct5D/AGTS2LTp6jZuDgHAVUC3/oEHGM5U8JTQAc0o/0M
   description: ''
   on:
-    RUST_VERSION: nightly-2017-12-05
+    RUST_VERSION: nightly
     appveyor_repo_tag: true
   provider: GitHub
 
 cache:
   - C:\Users\appveyor\.cargo\registry
   - target
+
+branches:
+  only:
+    # Release tags
+    - /^\d+\.\d+\.\d+.*$/
+    - master
 
 notifications:
   - provider: Email

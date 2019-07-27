@@ -17,19 +17,22 @@ for details.
 
 ## Install
 
+We have [prebuilt binaries available][releases] for a while now, thanks to
+the [trust] project!
+
 The package is a drop-in replacement of `autojump`. Assuming `autojump` is
 already installed, or at least the shell script part of it has been properly
 set up, and you have in `$PATH` `~/.cargo/bin` before the system binary
-locations, all you have to do is:
+locations, all you have to do is to put [a binary of your choice architecture][releases]
+in your PATH, overriding the original `autojump` script.
 
-```sh
-cargo install autojump
-
-# tell the shell to forget about previous location of autojump
-hash -r
-```
+You may have to issue `hash -r` for the shell to forget previous
+location of `autojump`, if you don't want to re-exec your shell.
 
 (Manually cloning the repository and building is okay, of course.)
+
+[releases]: https://github.com/xen0n/autojump-rs/releases
+[trust]: https://github.com/japaric/trust
 
 
 ## Features
@@ -44,31 +47,22 @@ modern hardware**. As the program itself is very short-running, the overhead of
 setting up and tearing down a whole Python VM could be overwhelming,
 especially on less capable hardware. With `autojump-rs` this latency is
 greatly reduced. Typical running time is like this on the author's Core
-i7-2670QM laptop, with a directory database of 256 entries:
+i7-2670QM laptop, with a directory database of 1014 entries:
 
 ```
 $ time ./autojump/bin/autojump au
 /home/xenon/src/autojump-rs
-./autojump/bin/autojump au  0.05s user 0.02s system 96% cpu 0.080 total
+./autojump/bin/autojump au  0.09s user 0.01s system 99% cpu 0.103 total
 
 $ time ./autojump-rs/target/release/autojump au
 /home/xenon/src/autojump-rs
-./autojump-rs/target/release/autojump au  0.02s user 0.00s system 94% cpu 0.020 total
+./autojump-rs/target/release/autojump au  0.00s user 0.00s system 87% cpu 0.007 total
 ```
 
 The time savings are more pronounced on less powerful hardware, where every
-cycle shaved off counts. On a Loongson 3A2000 box running at 1.0 GHz the
-timings are like this, with a database of the same size:
-
-```
-$ time ./autojump/bin/autojump au
-/opt/store/src/autojump-rs
-./autojump/bin/autojump au  0.15s user 0.02s system 97% cpu 0.178 total
-
-$ time ./autojump-rs/target/release/autojump au
-/opt/store/src/autojump-rs
-./autojump-rs/target/release/autojump au  0.04s user 0.01s system 96% cpu 0.051 total
-```
+cycle shaved off counts. The running time on a 1.4GHz Loongson 3A3000 is
+about 10ms, for example, which is very close to the x86 figures despite the
+clock frequency difference.
 
 And, of course, the program no longer interacts with Python in any way, so the
 virtualenv-related crashes are no more. Say goodbye to the dreaded

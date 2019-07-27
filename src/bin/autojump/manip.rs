@@ -1,9 +1,9 @@
 use std::env;
 use std::path;
 
-use super::super::Config;
-use super::super::data;
-use super::super::data::Entry;
+use autojump::Config;
+use autojump::data;
+use autojump::data::Entry;
 
 
 const DEFAULT_INCREASE_WEIGHT: isize = 10;
@@ -29,7 +29,7 @@ where
     let p = p.as_ref();
 
     // don't process $HOME
-    if let Some(home) = env::home_dir() {
+    if let Some(home) = dirs::home_dir() {
         if p == home {
             // synthesize a fake entry with weight zeroed
             return Entry::new(p, 0.0);

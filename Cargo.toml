@@ -1,12 +1,17 @@
 [package]
 name = "autojump"
-version = "0.3.1"
+version = "0.4.0"
 authors = ["Wang Xuerui <git@xen0n.name>"]
 description = "A Rust port and drop-in replacement of autojump"
 repository = "https://github.com/xen0n/autojump-rs"
 readme = "README.md"
 license = "GPL-3.0+"
 include = ["src/**/*.rs", "Cargo.toml"]
+edition = "2018"
+
+
+[profile.release]
+lto = true
 
 
 [features]
@@ -16,8 +21,9 @@ nightly = []
 
 [dependencies]
 atomicwrites = "0.1.4"
-docopt = "0.8.1"
+clap = "2"
 regex = "0.2"
 serde = "1.0.19"
 serde_derive = "1.0.19"
 strsim = "0.6"
+dirs = "1.0"

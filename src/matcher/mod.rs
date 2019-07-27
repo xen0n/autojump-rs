@@ -6,19 +6,16 @@ mod tests;
 #[cfg(all(test, windows))]
 mod tests_windows;
 
-
 use std::iter;
 use std::path;
 
 use regex;
-
 
 pub struct Matcher<'a> {
     fuzzy_matcher: fuzzy::FuzzyMatcher<'a>,
     re_anywhere: regex::Regex,
     re_consecutive: regex::Regex,
 }
-
 
 /// Returns whether matches should ignore case based on uppercase letter's
 /// presence in the needles.
@@ -34,16 +31,17 @@ fn detect_smartcase(needles: &[&str]) -> bool {
     true
 }
 
-
-// Iterator sadness...
-macro_rules! filter_path_with_re {
-    ($l: expr, $re: expr) => {
-        $l
-            .iter()
-            .filter(move |&p| $re.is_match(p.as_ref().to_string_lossy().to_mut()))
-    };
+fn filter_path_with_re<'a, P>(
+    input: &'a [P],
+    re: &'a regex::Regex,
+) -> impl iter::Iterator<Item = &'a P>
+where
+    P: AsRef<path::Path>,
+{
+    input
+        .iter()
+        .filter(move |&p| re.is_match(p.as_ref().to_string_lossy().to_mut()))
 }
-
 
 impl<'a> Matcher<'a> {
     pub fn new_smartcase(needles: Vec<&'a str>) -> Matcher<'a> {
@@ -65,29 +63,12 @@ impl<'a> Matcher<'a> {
         }
     }
 
-
-    #[cfg(feature = "nightly")]
-    pub fn execute<'p, P>(&'a self, haystack: &'p [P]) -> impl iter::Iterator<Item = &'p P> + 'a
+    pub fn execute<'b, P>(&'b self, haystack: &'b [P]) -> impl iter::Iterator<Item = &'b P>
     where
         P: AsRef<path::Path>,
-        'p: 'a,
     {
-        filter_path_with_re!(haystack, self.re_consecutive)
+        filter_path_with_re(haystack, &self.re_consecutive)
             .chain(self.fuzzy_matcher.filter_path(haystack))
-            .chain(filter_path_with_re!(haystack, self.re_anywhere))
-    }
-
-
-    #[cfg(not(feature = "nightly"))]
-    pub fn execute<'p, P>(&'a self, haystack: &'p [P]) -> Box<iter::Iterator<Item = &'p P> + 'a>
-    where
-        P: AsRef<path::Path>,
-        'p: 'a,
-    {
-        Box::new(
-            filter_path_with_re!(haystack, self.re_consecutive)
-                .chain(self.fuzzy_matcher.filter_path(haystack))
-                .chain(filter_path_with_re!(haystack, self.re_anywhere)),
-        )
+            .chain(filter_path_with_re(haystack, &self.re_anywhere))
     }
 }

@@ -1,5 +1,5 @@
-# Based on the "trust" template v0.1.1
-# https://github.com/japaric/trust/tree/v0.1.1
+# Based on the "trust" template v0.1.2
+# https://github.com/japaric/trust/tree/v0.1.2
 
 dist: trusty
 language: rust
@@ -9,6 +9,9 @@ sudo: required
 env:
   global:
     - CRATE_NAME=autojump
+
+rust:
+  - nightly
 
 matrix:
   include:
@@ -31,7 +34,6 @@ matrix:
     - env: TARGET=aarch64-unknown-linux-gnu
     - env: TARGET=arm-unknown-linux-gnueabi
     - env: TARGET=armv7-unknown-linux-gnueabihf
-    - env: TARGET=i686-unknown-linux-gnu
     - env: TARGET=i686-unknown-linux-musl
     - env: TARGET=mips-unknown-linux-gnu
     - env: TARGET=mips64-unknown-linux-gnuabi64
@@ -41,7 +43,6 @@ matrix:
     - env: TARGET=powerpc64-unknown-linux-gnu
     - env: TARGET=powerpc64le-unknown-linux-gnu
     - env: TARGET=s390x-unknown-linux-gnu DISABLE_TESTS=1
-    - env: TARGET=x86_64-unknown-linux-gnu
     - env: TARGET=x86_64-unknown-linux-musl
 
     # *BSD
@@ -49,10 +50,15 @@ matrix:
     - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
     - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
 
-  # netbsd currently doesn't build (because of nix-0.9.0)
+  # the following configurations currently doesn't build (because of libc type mismatches)
   env:  # important: https://docs.travis-ci.com/user/customizing-the-build/#rows-that-are-allowed-to-fail
   allow_failures:
-      - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
+    - env: TARGET=aarch64-linux-android DISABLE_TESTS=1
+    - env: TARGET=arm-linux-androideabi DISABLE_TESTS=1
+    - env: TARGET=armv7-linux-androideabi DISABLE_TESTS=1
+    - env: TARGET=i686-linux-android DISABLE_TESTS=1
+    - env: TARGET=x86_64-linux-android DISABLE_TESTS=1
+    - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
 
 before_install:
   - set -e
@@ -72,12 +78,12 @@ before_deploy:
 
 deploy:
   api_key:
-    secure: NRazS54YDCGpBCyA7AOg0xDQTkz4n1VaE4NF7GpsqHFFL87JCgPD7ojt0k5sE7paIpZA5ABta2S0EgoGXBcxgNKRWCdtTqIvd+KKhweJl6qVgr2uKeXV3BUSpOCw4urrf2Tax/hTh+jK88XBSIy85Jnwm0vzExyANdiu/3n30nqMNCZw4D/hg6NQYBzPlbU0FOVz1i6OzSjBhJuF/raUX5XywuMNF6RuNzJeSEzbV3e0K6dOuAXMYGdue5QNlgodUiefeaZSY0MG43K+mwZJYe013C2XwGaubrePKR2RMTxcnIGVsQH4Mgh8PTWymZUke/J2MXs/gSzocQp6ATcZHVk3gtgkOoO2YhONanByZZrfTCNmXKxdrOqM+oeC4L1FuOmHlVDLKhdCH5gOvSo4215la7AdpmY/+IzbK33jIQQdDMV8S1ChpZTitOTtiV533oo+zcT3yhI3TgLz09Uga0kuEqMGM512oQkjCgDrANDfBX3GR/PMrgr64+zIqPzq0HKksXnMgtgCeD44Lkfk0bBxA6+lIFJLLWIuPU1SHsSQ6KWRDJBXFvelajszNU/b31oHYf3mtz/of+vuKv/iL8t0XkMSQjdN9GCNNVV2aHejOudCKjCCoAawyJ7Z22rrNugu4+r7Wxhf7syTOpAv3shzjtIP/liUG6Snq3PGGBg=
+    secure: G3d3zoQ5NA+fLIXOMxL1TuYZIN76yiEQQ6AEyQwV9YNKvDCuqDy+Ls6c2RqSdDBOe+jdqMO8kCQGhgj4u+YIx8zlkzO5WjepQk9a/4VeAHGRsLuCvvTq1J9zqDxw7s6klZBvDJM9EJboviIguDJQn+5/jwGqYczw1Qq6JzXpo5AfTg5O9UcDIRgZlt4LXpHgNvM4tIFD6RnFoeCxzIPloNoKDnqB3Ebxcf1vD/xhXQZR9zlFE7Zq0nmmY2C+nvwVfEzvBaKdiSrk2ZDfw1jhPdQTHcIOwmUUSfhRIOjQvmVtSojDy+p8wZ2O0Tvopuj//XrL3kGo9tDdeFpht4atF92OesYit5ZoutCJZgcoOQHr/yKt0lVcCqYihh7voeWZ4fDUXXbwI4jpn6uXE6P60s5u9KV64XkwQJanZoz/Pn3KAZRzvmtbjQbS7xQ4gaU1on0KJW4ETesMta4sCKDT8VCt8umZGHJOvneCFChOdsuVy+oUXHmpIiijVwprm+pgN/IQgrVWX9uVNTksU4pJ9XpcJudjQ+2aVXRzeuTuEuP6EArcc12DMsoaTbvjEyVy5jLcW4XBF5vMKvNZ9ydUQEAGBEkSeyR1QR5MpsBCZEz49EY8dqPzPwzbkoU3nh+rPKSD9FxQL+IRlqw6m7oP9worzbpW081vVzLBiTscmOg=
 
   file_glob: true
   file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
   on:
-    condition: $TRAVIS_RUST_VERSION = stable
+    condition: $TRAVIS_RUST_VERSION = nightly
     tags: true
   provider: releases
   skip_cleanup: true
@@ -86,6 +92,12 @@ cache: cargo
 before_cache:
   # Travis can't cache files that are not readable by "others"
   - chmod -R a+r $HOME/.cargo
+
+branches:
+  only:
+    # release tags
+    - /^\d+\.\d+\.\d+.*$/
+    - master
 
 notifications:
   email:

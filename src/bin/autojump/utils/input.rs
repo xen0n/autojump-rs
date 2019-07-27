@@ -2,13 +2,11 @@ use std::path;
 
 
 fn sanitize_one_needle(needle: &str) -> &str {
-    if needle.len() == 1 {
-        if needle.chars().next().unwrap() == path::MAIN_SEPARATOR {
-            return needle;
-        }
+    if needle == path::MAIN_SEPARATOR.to_string() {
+        needle
+    } else {
+        needle.trim_end_matches(path::MAIN_SEPARATOR)
     }
-
-    needle.trim_right_matches(path::MAIN_SEPARATOR)
 }
 
 

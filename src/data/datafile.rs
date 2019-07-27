@@ -6,7 +6,7 @@ use std::time;
 
 use atomicwrites;
 
-use super::super::Config;
+use crate::Config;
 use super::entry::Entry;
 
 
@@ -15,7 +15,7 @@ const BACKUP_THRESHOLD: u64 = 24 * 60 * 60; // 1 d
 
 #[cfg(target_os = "macos")]
 fn migrate_osx_xdg_data(config: &Config) -> io::Result<()> {
-    let xdg_aj_home = super::super::xdg_home_hardcoded();
+    let xdg_aj_home = crate::xdg_home_hardcoded();
     if !xdg_aj_home.exists() {
         return Ok(());
     }
@@ -43,13 +43,9 @@ fn load_line(line: &str) -> Option<Entry> {
         return None;
     }
 
+    let weight = parts[0].parse::<f64>().ok()?;
     let path = path::PathBuf::from(parts[1]);
-    let weight = parts[0].parse::<f64>();
-    if let Ok(weight) = weight {
-        Some(Entry::new(path, weight))
-    } else {
-        None
-    }
+    Some(Entry::new(path, weight))
 }
 
 
@@ -58,13 +54,9 @@ fn load_from_file(f: fs::File) -> io::Result<Vec<Entry>> {
     let mut result = vec![];
 
     for line in reader.lines() {
-        if let Ok(line) = line {
-            let entry = load_line(&line);
-            if entry.is_some() {
-                result.push(entry.unwrap());
-            }
-        } else {
-            return Err(line.unwrap_err());
+        let line = line?;
+        if let Some(entry) = load_line(&line) {
+            result.push(entry)
         }
     }
 
