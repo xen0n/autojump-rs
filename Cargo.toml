@@ -10,6 +10,10 @@ include = ["src/**/*.rs", "Cargo.toml"]
 edition = "2018"
 
 
+[profile.release]
+lto = true
+
+
 [features]
 default = []
 nightly = []
