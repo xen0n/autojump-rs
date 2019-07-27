@@ -47,9 +47,14 @@ matrix:
     - env: TARGET=x86_64-unknown-freebsd DISABLE_TESTS=1
     - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
 
-  # netbsd currently doesn't build (because of nix-0.9.0)
+  # the following configurations currently doesn't build (because of libc type mismatches)
   env:  # important: https://docs.travis-ci.com/user/customizing-the-build/#rows-that-are-allowed-to-fail
   allow_failures:
+    - env: TARGET=aarch64-linux-android DISABLE_TESTS=1
+    - env: TARGET=arm-linux-androideabi DISABLE_TESTS=1
+    - env: TARGET=armv7-linux-androideabi DISABLE_TESTS=1
+    - env: TARGET=i686-linux-android DISABLE_TESTS=1
+    - env: TARGET=x86_64-linux-android DISABLE_TESTS=1
     - env: TARGET=x86_64-unknown-netbsd DISABLE_TESTS=1
 
 before_install:
