@@ -17,19 +17,22 @@ for details.
 
 ## Install
 
+We have [prebuilt binaries available][releases] for a while now, thanks to
+the [trust] project!
+
 The package is a drop-in replacement of `autojump`. Assuming `autojump` is
 already installed, or at least the shell script part of it has been properly
 set up, and you have in `$PATH` `~/.cargo/bin` before the system binary
-locations, all you have to do is:
+locations, all you have to do is to put [a binary of your choice architecture][releases]
+in your PATH, overriding the original `autojump` script.
 
-```sh
-cargo install autojump
-
-# tell the shell to forget about previous location of autojump
-hash -r
-```
+You may have to issue `hash -r` for the shell to forget previous
+location of `autojump`, if you don't want to re-exec your shell.
 
 (Manually cloning the repository and building is okay, of course.)
+
+[releases]: https://github.com/xen0n/autojump-rs/releases
+[trust]: https://github.com/japaric/trust
 
 
 ## Features
