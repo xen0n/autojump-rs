@@ -1,4 +1,4 @@
-use clap::{App, Arg};
+use clap::{App, Arg, crate_version};
 
 use super::super::Config;
 use super::{manip, purge, query, stat};
@@ -34,12 +34,12 @@ fn check_if_sourced() {
 }
 
 
-pub fn main(version_str: String) {
+pub fn main() {
     check_if_sourced();
 
     let args: Args = {
         let app = App::new("autojump-rs")
-            .version(version_str.as_str())
+            .version(crate_version!())
             .about("Automatically jump to directory passed as an argument.")
             .arg(
                 Arg::with_name("dir")
