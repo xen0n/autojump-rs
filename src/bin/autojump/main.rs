@@ -1,8 +1,12 @@
 use clap::{App, Arg, crate_version};
 
-use super::super::Config;
-use super::{manip, purge, query, stat};
+use autojump::Config;
 
+mod manip;
+mod purge;
+mod query;
+mod stat;
+mod utils;
 
 struct Args {
     arg_dir: Vec<String>,
@@ -17,8 +21,6 @@ struct Args {
 
 #[cfg(not(windows))]
 fn check_if_sourced() {
-    use super::super::utils;
-
     if !utils::is_autojump_sourced() {
         println!("Please source the correct autojump file in your shell's");
         println!("startup file. For more information, please reinstall autojump");

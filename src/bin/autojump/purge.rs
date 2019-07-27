@@ -1,5 +1,5 @@
-use super::super::Config;
-use super::super::data;
+use autojump::Config;
+use autojump::data;
 
 
 pub fn purge(config: &Config) {

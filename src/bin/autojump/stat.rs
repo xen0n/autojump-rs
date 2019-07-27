@@ -1,7 +1,7 @@
 use std::env;
 
-use super::super::Config;
-use super::super::data;
+use autojump::Config;
+use autojump::data;
 
 
 pub fn print_stat(config: &Config) {

@@ -1,11 +1,11 @@
 use std::env;
 use std::path;
 
-use super::super::data;
-use super::super::matcher::Matcher;
-use super::super::utils;
-use super::super::utils::TabEntryInfo;
-use super::super::Config;
+use autojump::data;
+use autojump::matcher::Matcher;
+use crate::utils;
+use crate::utils::TabEntryInfo;
+use autojump::Config;
 
 struct QueryConfig<'a> {
     needles: Vec<&'a str>,

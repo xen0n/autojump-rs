@@ -1,9 +1,9 @@
 use std::env;
 use std::path;
 
-use super::super::Config;
-use super::super::data;
-use super::super::data::Entry;
+use autojump::Config;
+use autojump::data;
+use autojump::data::Entry;
 
 
 const DEFAULT_INCREASE_WEIGHT: isize = 10;
