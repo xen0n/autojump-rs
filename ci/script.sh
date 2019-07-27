@@ -3,13 +3,13 @@
 set -ex
 
 main() {
-    cross build --features nightly --target $TARGET
+    cross build --target $TARGET
 
     if [ ! -z $DISABLE_TESTS ]; then
         return
     fi
 
-    cross test --features nightly --target $TARGET
+    cross test --target $TARGET
 }
 
 # we don't run the "test phase" when doing deploys
