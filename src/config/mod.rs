@@ -35,7 +35,9 @@ fn data_home() -> path::PathBuf {
     use std::env;
     // Use $XDG_DATA_HOME if defined, ~/.local/share/autojump otherwise.
     if let Some(home_s) = env::var_os("XDG_DATA_HOME") {
-        path::PathBuf::from(home_s)
+         let mut tmp = path::PathBuf::from(home_s);
+         tmp.push("autojump");
+         tmp
     } else {
         xdg_home_hardcoded()
     }
