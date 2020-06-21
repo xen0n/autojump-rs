@@ -1,4 +1,4 @@
-use clap::{App, Arg, crate_version};
+use clap::{crate_version, App, Arg};
 
 use autojump::Config;
 
@@ -18,7 +18,6 @@ struct Args {
     flag_stat: bool,
 }
 
-
 #[cfg(not(windows))]
 fn check_if_sourced() {
     if !utils::is_autojump_sourced() {
@@ -29,12 +28,10 @@ fn check_if_sourced() {
     }
 }
 
-
 #[cfg(windows)]
 fn check_if_sourced() {
     // no-op on Windows
 }
-
 
 pub fn main() {
     check_if_sourced();
@@ -43,51 +40,48 @@ pub fn main() {
         let app = App::new("autojump-rs")
             .version(crate_version!())
             .about("Automatically jump to directory passed as an argument.")
-            .arg(
-                Arg::with_name("dir")
-                    .multiple(true)
-            )
+            .arg(Arg::with_name("dir").multiple(true))
             .arg(
                 Arg::with_name("add")
-                .short("a")
-                .long("add")
-                .takes_value(true)
-                .value_name("DIR")
-                .help("add path")
+                    .short("a")
+                    .long("add")
+                    .takes_value(true)
+                    .value_name("DIR")
+                    .help("add path"),
             )
             .arg(
                 Arg::with_name("complete")
-                .long("complete")
-                .help("used for tab completion")
+                    .long("complete")
+                    .help("used for tab completion"),
             )
             .arg(
                 Arg::with_name("purge")
-                .long("purge")
-                .help("remove non-existent paths from database")
+                    .long("purge")
+                    .help("remove non-existent paths from database"),
             )
             .arg(
                 Arg::with_name("stat")
-                .short("s")
-                .long("stat")
-                .help("show database entries and their key weights")
+                    .short("s")
+                    .long("stat")
+                    .help("show database entries and their key weights"),
             )
             .arg(
                 Arg::with_name("increase")
-                .short("i")
-                .long("increase")
-                .takes_value(true)
-                .value_name("WEIGHT")
-                .min_values(0)
-                .help("increase current directory weight, default 10")
+                    .short("i")
+                    .long("increase")
+                    .takes_value(true)
+                    .value_name("WEIGHT")
+                    .min_values(0)
+                    .help("increase current directory weight, default 10"),
             )
             .arg(
                 Arg::with_name("decrease")
-                .short("d")
-                .long("decrease")
-                .takes_value(true)
-                .value_name("WEIGHT")
-                .min_values(0)
-                .help("decrease current directory weight, default 15")
+                    .short("d")
+                    .long("decrease")
+                    .takes_value(true)
+                    .value_name("WEIGHT")
+                    .min_values(0)
+                    .help("decrease current directory weight, default 15"),
             )
             .get_matches();
 
@@ -104,7 +98,10 @@ pub fn main() {
         };
 
         Args {
-            arg_dir: app.values_of("dir").map(|x| x.map(|i| i.to_owned()).collect()).unwrap_or(vec![]),
+            arg_dir: app
+                .values_of("dir")
+                .map(|x| x.map(|i| i.to_owned()).collect())
+                .unwrap_or(vec![]),
             flag_complete: app.is_present("complete"),
             flag_purge: app.is_present("purge"),
             flag_add: app.value_of("add").map(|x| x.to_owned()),

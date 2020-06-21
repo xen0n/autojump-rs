@@ -1,12 +1,10 @@
 use std::path;
 
-
 pub struct Config {
     pub prefix: path::PathBuf,
     pub data_path: path::PathBuf,
     pub backup_path: path::PathBuf,
 }
-
 
 #[cfg(unix)]
 fn home_dir() -> path::PathBuf {
@@ -16,7 +14,6 @@ fn home_dir() -> path::PathBuf {
         None => path::PathBuf::from("/"),
     }
 }
-
 
 #[cfg(unix)]
 pub fn xdg_home_hardcoded() -> path::PathBuf {
@@ -28,21 +25,19 @@ pub fn xdg_home_hardcoded() -> path::PathBuf {
     tmp
 }
 
-
 // TODO: is this cfg appropriate for *all* Unix platforms, especially BSD?
 #[cfg(all(unix, not(target_os = "macos")))]
 fn data_home() -> path::PathBuf {
     use std::env;
     // Use $XDG_DATA_HOME if defined, ~/.local/share/autojump otherwise.
     if let Some(home_s) = env::var_os("XDG_DATA_HOME") {
-         let mut tmp = path::PathBuf::from(home_s);
-         tmp.push("autojump");
-         tmp
+        let mut tmp = path::PathBuf::from(home_s);
+        tmp.push("autojump");
+        tmp
     } else {
         xdg_home_hardcoded()
     }
 }
-
 
 #[cfg(target_os = "macos")]
 fn data_home() -> path::PathBuf {
@@ -51,7 +46,6 @@ fn data_home() -> path::PathBuf {
     tmp.push("autojump");
     tmp
 }
-
 
 #[cfg(windows)]
 fn data_home() -> path::PathBuf {
@@ -63,7 +57,6 @@ fn data_home() -> path::PathBuf {
     tmp.push("autojump");
     tmp
 }
-
 
 impl Config {
     pub fn defaults() -> Config {

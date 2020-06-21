@@ -2,7 +2,6 @@ use std::path;
 
 use regex;
 
-
 pub fn prepare_regex<F>(needles: &[&str], f: F, ignore_case: bool) -> regex::Regex
 where
     F: Fn(&[&str]) -> String,
@@ -15,7 +14,6 @@ where
     };
     regex::Regex::new(&re).unwrap()
 }
-
 
 /// Port of Python's `re.escape()`, except that '/' is passed as-is.
 fn re_escape(s: &str) -> String {
@@ -36,7 +34,6 @@ fn re_escape(s: &str) -> String {
     result
 }
 
-
 pub fn re_match_anywhere(needles: &[&str]) -> String {
     let mut result = String::new();
     result.push_str(r".*");
@@ -46,7 +43,6 @@ pub fn re_match_anywhere(needles: &[&str]) -> String {
     }
     result
 }
-
 
 pub fn re_match_consecutive(needles: &[&str]) -> String {
     let sep = {
@@ -70,11 +66,9 @@ pub fn re_match_consecutive(needles: &[&str]) -> String {
     result
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
 
     #[test]
     fn test_re_escape() {

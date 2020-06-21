@@ -1,6 +1,5 @@
-use autojump::Config;
 use autojump::data;
-
+use autojump::Config;
 
 pub fn purge(config: &Config) {
     let entries = data::load(config);

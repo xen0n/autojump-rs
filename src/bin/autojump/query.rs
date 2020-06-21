@@ -1,10 +1,10 @@
 use std::env;
 use std::path;
 
-use autojump::data;
-use autojump::matcher::Matcher;
 use crate::utils;
 use crate::utils::TabEntryInfo;
+use autojump::data;
+use autojump::matcher::Matcher;
 use autojump::Config;
 
 struct QueryConfig<'a> {

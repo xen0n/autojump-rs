@@ -1,8 +1,7 @@
 use std::env;
 
-use autojump::Config;
 use autojump::data;
-
+use autojump::Config;
 
 pub fn print_stat(config: &Config) {
     let cwd: Option<_> = match env::current_dir() {
