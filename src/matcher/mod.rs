@@ -57,9 +57,9 @@ impl<'a> Matcher<'a> {
             re_based::prepare_regex(&needles, re_based::re_match_consecutive, ignore_case);
 
         Matcher {
-            fuzzy_matcher: fuzzy_matcher,
-            re_anywhere: re_anywhere,
-            re_consecutive: re_consecutive,
+            fuzzy_matcher,
+            re_anywhere,
+            re_consecutive,
         }
     }
 

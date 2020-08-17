@@ -15,7 +15,7 @@ impl Entry {
     {
         Entry {
             path: path.into(),
-            weight: weight,
+            weight,
         }
     }
 }
