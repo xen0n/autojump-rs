@@ -106,11 +106,11 @@ fn prepare_query<'a>(
     };
 
     Query::Execute(QueryConfig {
-        needles: needles,
-        check_existence: check_existence,
-        index: index,
-        count: count,
-        use_fallback: use_fallback,
+        needles,
+        check_existence,
+        index,
+        count,
+        use_fallback,
     })
 }
 

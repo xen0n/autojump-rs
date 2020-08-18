@@ -105,8 +105,8 @@ pub fn main() {
             flag_complete: app.is_present("complete"),
             flag_purge: app.is_present("purge"),
             flag_add: app.value_of("add").map(|x| x.to_owned()),
-            flag_increase: flag_increase,
-            flag_decrease: flag_decrease,
+            flag_increase,
+            flag_decrease,
             flag_stat: app.is_present("stat"),
         }
     };

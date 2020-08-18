@@ -20,10 +20,7 @@ impl<'a> FuzzyMatcher<'a> {
     }
 
     pub fn new(needle: &'a str, threshold: f64) -> FuzzyMatcher<'a> {
-        FuzzyMatcher {
-            needle: needle,
-            threshold: threshold,
-        }
+        FuzzyMatcher { needle, threshold }
     }
 
     pub fn filter_path<'p, P>(&'a self, paths: &'p [P]) -> impl iter::Iterator<Item = &'p P> + 'a

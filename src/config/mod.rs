@@ -71,8 +71,8 @@ impl Config {
 
         Config {
             prefix: data_home,
-            data_path: data_path,
-            backup_path: backup_path,
+            data_path,
+            backup_path,
         }
     }
 }
