@@ -20,7 +20,7 @@ nightly = []
 
 
 [dependencies]
-atomicwrites = "0.3.0"
+atomicwrites = "0.3.1"
 clap = "3"
 regex = "1.5"
 serde = "1.0.133"
