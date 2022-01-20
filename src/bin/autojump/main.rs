@@ -40,34 +40,34 @@ pub fn main() {
         let app = App::new("autojump-rs")
             .version(crate_version!())
             .about("Automatically jump to directory passed as an argument.")
-            .arg(Arg::with_name("dir").multiple(true))
+            .arg(Arg::new("dir").multiple_occurrences(true))
             .arg(
-                Arg::with_name("add")
-                    .short("a")
+                Arg::new("add")
+                    .short('a')
                     .long("add")
                     .takes_value(true)
                     .value_name("DIR")
                     .help("add path"),
             )
             .arg(
-                Arg::with_name("complete")
+                Arg::new("complete")
                     .long("complete")
                     .help("used for tab completion"),
             )
             .arg(
-                Arg::with_name("purge")
+                Arg::new("purge")
                     .long("purge")
                     .help("remove non-existent paths from database"),
             )
             .arg(
-                Arg::with_name("stat")
-                    .short("s")
+                Arg::new("stat")
+                    .short('s')
                     .long("stat")
                     .help("show database entries and their key weights"),
             )
             .arg(
-                Arg::with_name("increase")
-                    .short("i")
+                Arg::new("increase")
+                    .short('i')
                     .long("increase")
                     .takes_value(true)
                     .value_name("WEIGHT")
@@ -75,8 +75,8 @@ pub fn main() {
                     .help("increase current directory weight, default 10"),
             )
             .arg(
-                Arg::with_name("decrease")
-                    .short("d")
+                Arg::new("decrease")
+                    .short('d')
                     .long("decrease")
                     .takes_value(true)
                     .value_name("WEIGHT")
