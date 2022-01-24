@@ -128,15 +128,25 @@ jobs:
           - armv7-unknown-linux-musleabihf
           - i686-unknown-linux-musl
           - mips-unknown-linux-musl
-          - mips64-unknown-linux-muslabi64
-          - mips64el-unknown-linux-muslabi64
+          # FIXME: cross doesn't know about these
+          # - mips64-unknown-linux-muslabi64
+          # - mips64el-unknown-linux-muslabi64
+          #
+          # add back the glibc dynamically linked glibc targets as a stop-gap
+          # measure:
+          - mips64-unknown-linux-gnuabi64
+          - mips64el-unknown-linux-gnuabi64
+
           - mipsel-unknown-linux-musl
           - powerpc-unknown-linux-gnu
-          - powerpc64-unknown-linux-gnu
           - powerpc64le-unknown-linux-gnu
           - s390x-unknown-linux-gnu
           - x86_64-unknown-linux-musl
-          - sparc64-unknown-linux-gnu
+          # FIXME: weird cross Docker image problem (cannot find image despite
+          # being supported)
+          # - powerpc64-unknown-linux-gnu
+          # - sparc64-unknown-linux-gnu
+
           # Android
           - aarch64-linux-android
           - arm-linux-androideabi
