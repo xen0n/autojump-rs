@@ -24,6 +24,6 @@ atomicwrites = "0.3.1"
 clap = { version = "3", features = ["cargo"] }
 regex = "1.6"
 serde = "1.0.141"
-serde_derive = "1.0.140"
+serde_derive = "1.0.141"
 strsim = "0.10"
 dirs = "4.0"
