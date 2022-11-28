@@ -23,7 +23,7 @@ nightly = []
 atomicwrites = "0.3.1"
 clap = { version = "3", features = ["cargo"] }
 regex = "1.6"
-serde = "1.0.147"
+serde = "1.0.148"
 serde_derive = "1.0.147"
 strsim = "0.10"
 dirs = "4.0"
