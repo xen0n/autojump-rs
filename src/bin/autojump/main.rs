@@ -1,4 +1,4 @@
-use clap::{crate_version, App, Arg};
+use clap::{crate_version, value_parser, Arg, ArgAction, Command};
 
 use autojump::Config;
 
@@ -37,16 +37,17 @@ pub fn main() {
     check_if_sourced();
 
     let args: Args = {
-        let app = App::new("autojump-rs")
+        let app = Command::new("autojump-rs")
             .version(crate_version!())
             .about("Automatically jump to directory passed as an argument.")
-            .arg(Arg::new("dir").multiple_occurrences(true))
+            .arg(Arg::new("dir").action(ArgAction::Append))
             .arg(
                 Arg::new("add")
                     .short('a')
                     .long("add")
                     .takes_value(true)
                     .value_name("DIR")
+                    .action(ArgAction::Set)
                     .help("add path"),
             )
             .arg(
@@ -70,6 +71,8 @@ pub fn main() {
                     .short('i')
                     .long("increase")
                     .takes_value(true)
+                    .value_parser(value_parser!(isize))
+                    .action(ArgAction::Set)
                     .value_name("WEIGHT")
                     .min_values(0)
                     .help("increase current directory weight, default 10"),
@@ -79,35 +82,36 @@ pub fn main() {
                     .short('d')
                     .long("decrease")
                     .takes_value(true)
+                    .value_parser(value_parser!(isize))
+                    .action(ArgAction::Set)
                     .value_name("WEIGHT")
                     .min_values(0)
                     .help("decrease current directory weight, default 15"),
             )
             .get_matches();
 
-        let flag_increase = if app.is_present("increase") {
-            Some(app.value_of("increase").map(|x| x.parse().unwrap()))
+        let flag_increase = if app.contains_id("increase") {
+            Some(app.get_one::<isize>("increase").copied())
         } else {
             None
         };
 
-        let flag_decrease = if app.is_present("decrease") {
-            Some(app.value_of("decrease").map(|x| x.parse().unwrap()))
+        let flag_decrease = if app.contains_id("decrease") {
+            Some(app.get_one::<isize>("decrease").copied())
         } else {
             None
         };
 
         Args {
             arg_dir: app
-                .values_of("dir")
-                .map(|x| x.map(|i| i.to_owned()).collect())
-                .unwrap_or(vec![]),
-            flag_complete: app.is_present("complete"),
-            flag_purge: app.is_present("purge"),
-            flag_add: app.value_of("add").map(|x| x.to_owned()),
+                .get_many::<String>("dir")
+                .map_or(vec![], |x| x.cloned().collect()),
+            flag_complete: app.contains_id("complete"),
+            flag_purge: app.contains_id("purge"),
+            flag_add: app.get_one::<String>("add").cloned(),
             flag_increase,
             flag_decrease,
-            flag_stat: app.is_present("stat"),
+            flag_stat: app.contains_id("stat"),
         }
     };
     let config = Config::defaults();
