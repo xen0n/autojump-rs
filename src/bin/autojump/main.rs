@@ -45,7 +45,6 @@ pub fn main() {
                 Arg::new("add")
                     .short('a')
                     .long("add")
-                    .takes_value(true)
                     .value_name("DIR")
                     .action(ArgAction::Set)
                     .help("add path"),
@@ -70,22 +69,20 @@ pub fn main() {
                 Arg::new("increase")
                     .short('i')
                     .long("increase")
-                    .takes_value(true)
                     .value_parser(value_parser!(isize))
                     .action(ArgAction::Set)
                     .value_name("WEIGHT")
-                    .min_values(0)
+                    .num_args(0..=1)
                     .help("increase current directory weight, default 10"),
             )
             .arg(
                 Arg::new("decrease")
                     .short('d')
                     .long("decrease")
-                    .takes_value(true)
                     .value_parser(value_parser!(isize))
                     .action(ArgAction::Set)
                     .value_name("WEIGHT")
-                    .min_values(0)
+                    .num_args(0..=1)
                     .help("decrease current directory weight, default 15"),
             )
             .get_matches();
