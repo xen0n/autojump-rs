@@ -1,4 +1,4 @@
-use clap::{App, Arg, crate_version};
+use clap::{crate_version, value_parser, Arg, ArgAction, Command};
 
 use autojump::Config;
 
@@ -18,7 +18,6 @@ struct Args {
     flag_stat: bool,
 }
 
-
 #[cfg(not(windows))]
 fn check_if_sourced() {
     if !utils::is_autojump_sourced() {
@@ -29,88 +28,87 @@ fn check_if_sourced() {
     }
 }
 
-
 #[cfg(windows)]
 fn check_if_sourced() {
     // no-op on Windows
 }
 
-
 pub fn main() {
     check_if_sourced();
 
     let args: Args = {
-        let app = App::new("autojump-rs")
+        let app = Command::new("autojump-rs")
             .version(crate_version!())
             .about("Automatically jump to directory passed as an argument.")
+            .arg(Arg::new("dir").action(ArgAction::Append))
             .arg(
-                Arg::with_name("dir")
-                    .multiple(true)
+                Arg::new("add")
+                    .short('a')
+                    .long("add")
+                    .value_name("DIR")
+                    .action(ArgAction::Set)
+                    .help("add path"),
             )
             .arg(
-                Arg::with_name("add")
-                .short("a")
-                .long("add")
-                .takes_value(true)
-                .value_name("DIR")
-                .help("add path")
+                Arg::new("complete")
+                    .long("complete")
+                    .help("used for tab completion"),
             )
             .arg(
-                Arg::with_name("complete")
-                .long("complete")
-                .help("used for tab completion")
+                Arg::new("purge")
+                    .long("purge")
+                    .help("remove non-existent paths from database"),
             )
             .arg(
-                Arg::with_name("purge")
-                .long("purge")
-                .help("remove non-existent paths from database")
+                Arg::new("stat")
+                    .short('s')
+                    .long("stat")
+                    .help("show database entries and their key weights"),
             )
             .arg(
-                Arg::with_name("stat")
-                .short("s")
-                .long("stat")
-                .help("show database entries and their key weights")
+                Arg::new("increase")
+                    .short('i')
+                    .long("increase")
+                    .value_parser(value_parser!(isize))
+                    .action(ArgAction::Set)
+                    .value_name("WEIGHT")
+                    .num_args(0..=1)
+                    .help("increase current directory weight, default 10"),
             )
             .arg(
-                Arg::with_name("increase")
-                .short("i")
-                .long("increase")
-                .takes_value(true)
-                .value_name("WEIGHT")
-                .min_values(0)
-                .help("increase current directory weight, default 10")
-            )
-            .arg(
-                Arg::with_name("decrease")
-                .short("d")
-                .long("decrease")
-                .takes_value(true)
-                .value_name("WEIGHT")
-                .min_values(0)
-                .help("decrease current directory weight, default 15")
+                Arg::new("decrease")
+                    .short('d')
+                    .long("decrease")
+                    .value_parser(value_parser!(isize))
+                    .action(ArgAction::Set)
+                    .value_name("WEIGHT")
+                    .num_args(0..=1)
+                    .help("decrease current directory weight, default 15"),
             )
             .get_matches();
 
-        let flag_increase = if app.is_present("increase") {
-            Some(app.value_of("increase").map(|x| x.parse().unwrap()))
+        let flag_increase = if app.contains_id("increase") {
+            Some(app.get_one::<isize>("increase").copied())
         } else {
             None
         };
 
-        let flag_decrease = if app.is_present("decrease") {
-            Some(app.value_of("decrease").map(|x| x.parse().unwrap()))
+        let flag_decrease = if app.contains_id("decrease") {
+            Some(app.get_one::<isize>("decrease").copied())
         } else {
             None
         };
 
         Args {
-            arg_dir: app.values_of("dir").map(|x| x.map(|i| i.to_owned()).collect()).unwrap_or(vec![]),
-            flag_complete: app.is_present("complete"),
-            flag_purge: app.is_present("purge"),
-            flag_add: app.value_of("add").map(|x| x.to_owned()),
-            flag_increase: flag_increase,
-            flag_decrease: flag_decrease,
-            flag_stat: app.is_present("stat"),
+            arg_dir: app
+                .get_many::<String>("dir")
+                .map_or(vec![], |x| x.cloned().collect()),
+            flag_complete: app.contains_id("complete"),
+            flag_purge: app.contains_id("purge"),
+            flag_add: app.get_one::<String>("add").cloned(),
+            flag_increase,
+            flag_decrease,
+            flag_stat: app.contains_id("stat"),
         }
     };
     let config = Config::defaults();

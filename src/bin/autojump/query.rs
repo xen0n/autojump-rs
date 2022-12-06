@@ -1,10 +1,10 @@
 use std::env;
 use std::path;
 
-use autojump::data;
-use autojump::matcher::Matcher;
 use crate::utils;
 use crate::utils::TabEntryInfo;
+use autojump::data;
+use autojump::matcher::Matcher;
 use autojump::Config;
 
 struct QueryConfig<'a> {
@@ -106,11 +106,11 @@ fn prepare_query<'a>(
     };
 
     Query::Execute(QueryConfig {
-        needles: needles,
-        check_existence: check_existence,
-        index: index,
-        count: count,
-        use_fallback: use_fallback,
+        needles,
+        check_existence,
+        index,
+        count,
+        use_fallback,
     })
 }
 

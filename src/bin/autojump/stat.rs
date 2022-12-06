@@ -1,8 +1,7 @@
 use std::env;
 
-use autojump::Config;
 use autojump::data;
-
+use autojump::Config;
 
 pub fn print_stat(config: &Config) {
     let cwd: Option<_> = match env::current_dir() {
@@ -33,7 +32,7 @@ pub fn print_stat(config: &Config) {
         }
     }
 
-    println!("________________________________________\n");
+    println!("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n");
     println!("{:.0}:\t total weight", weight_sum.floor());
     println!("{}:\t number of entries", entries.len());
 

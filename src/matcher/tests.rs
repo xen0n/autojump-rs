@@ -2,10 +2,9 @@
 
 use std::path;
 
-use super::*;
 use super::fuzzy::*;
 use super::re_based::*;
-
+use super::*;
 
 #[test]
 fn test_smartcase() {
@@ -23,13 +22,11 @@ fn test_smartcase() {
     a!(["foo", "bar", "测试", "baZ"], false);
 }
 
-
 macro_rules! assert_re {
     ($fn_name: ident, $x: tt, $y: expr) => {
         assert_eq!($fn_name(&vec! $x), $y);
     };
 }
-
 
 #[test]
 fn test_re_match_anywhere() {
@@ -44,7 +41,6 @@ fn test_re_match_anywhere() {
     a!(["测试", "baz"], r".*\x{6d4b}\x{8bd5}.*baz.*");
 }
 
-
 #[test]
 fn test_re_match_consecutive() {
     macro_rules! a {
@@ -57,7 +53,6 @@ fn test_re_match_consecutive() {
     a!(["foo", "baz"], r"foo[^/]*/[^/]*baz[^/]*$");
     a!(["测试", "baz"], r"\x{6d4b}\x{8bd5}[^/]*/[^/]*baz[^/]*$");
 }
-
 
 #[test]
 fn test_fuzzy() {
@@ -85,13 +80,9 @@ fn test_fuzzy() {
             "/moo/foo/baz",
             "/foo/ooofoo",
         ],
-        [
-            "/bar/foo",
-            "/bar/fooow",
-            "/foo/ooofoo",
-        ]);
+        ["/bar/foo", "/bar/fooow", "/foo/ooofoo",]
+    );
 }
-
 
 #[test]
 fn test_matcher() {

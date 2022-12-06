@@ -3,7 +3,6 @@ use std::path;
 
 use strsim;
 
-
 /// A fuzzy matcher based on Jaro-Winkler distances.
 ///
 /// The similarity is calculated between the last component of the path and
@@ -13,23 +12,16 @@ pub struct FuzzyMatcher<'a> {
     threshold: f64,
 }
 
-
 const DEFAULT_FUZZY_THRESHOLD: f64 = 0.6;
-
 
 impl<'a> FuzzyMatcher<'a> {
     pub fn defaults(needle: &'a str) -> FuzzyMatcher<'a> {
         FuzzyMatcher::new(needle, DEFAULT_FUZZY_THRESHOLD)
     }
 
-
     pub fn new(needle: &'a str, threshold: f64) -> FuzzyMatcher<'a> {
-        FuzzyMatcher {
-            needle: needle,
-            threshold: threshold,
-        }
+        FuzzyMatcher { needle, threshold }
     }
-
 
     pub fn filter_path<'p, P>(&'a self, paths: &'p [P]) -> impl iter::Iterator<Item = &'p P> + 'a
     where

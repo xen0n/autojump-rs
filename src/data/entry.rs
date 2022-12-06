@@ -2,13 +2,11 @@ use std::cmp;
 use std::fmt;
 use std::path;
 
-
 #[derive(Clone, Debug)]
 pub struct Entry {
     pub path: path::PathBuf,
     pub weight: f64,
 }
-
 
 impl Entry {
     pub fn new<P>(path: P, weight: f64) -> Entry
@@ -17,11 +15,10 @@ impl Entry {
     {
         Entry {
             path: path.into(),
-            weight: weight,
+            weight,
         }
     }
 }
-
 
 impl fmt::Display for Entry {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -29,13 +26,11 @@ impl fmt::Display for Entry {
     }
 }
 
-
 impl AsRef<path::Path> for Entry {
     fn as_ref(&self) -> &path::Path {
         self.path.as_path()
     }
 }
-
 
 impl PartialOrd for Entry {
     fn partial_cmp(&self, other: &Entry) -> Option<cmp::Ordering> {
@@ -43,16 +38,13 @@ impl PartialOrd for Entry {
     }
 }
 
-
 impl PartialEq for Entry {
     fn eq(&self, other: &Entry) -> bool {
         self.weight == other.weight
     }
 }
 
-
 impl Eq for Entry {}
-
 
 impl Ord for Entry {
     fn cmp(&self, other: &Entry) -> cmp::Ordering {

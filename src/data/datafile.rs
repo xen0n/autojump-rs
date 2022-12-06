@@ -6,12 +6,10 @@ use std::time;
 
 use atomicwrites;
 
-use crate::Config;
 use super::entry::Entry;
-
+use crate::Config;
 
 const BACKUP_THRESHOLD: u64 = 24 * 60 * 60; // 1 d
-
 
 #[cfg(target_os = "macos")]
 fn migrate_osx_xdg_data(config: &Config) -> io::Result<()> {
@@ -30,12 +28,10 @@ fn migrate_osx_xdg_data(config: &Config) -> io::Result<()> {
     Ok(())
 }
 
-
 #[cfg(not(target_os = "macos"))]
 fn migrate_osx_xdg_data(_: &Config) -> io::Result<()> {
     Ok(())
 }
-
 
 fn load_line(line: &str) -> Option<Entry> {
     let parts: Vec<_> = line.splitn(2, '\t').collect();
@@ -47,7 +43,6 @@ fn load_line(line: &str) -> Option<Entry> {
     let path = path::PathBuf::from(parts[1]);
     Some(Entry::new(path, weight))
 }
-
 
 fn load_from_file(f: fs::File) -> io::Result<Vec<Entry>> {
     let reader = io::BufReader::new(f);
@@ -62,7 +57,6 @@ fn load_from_file(f: fs::File) -> io::Result<Vec<Entry>> {
 
     Ok(result)
 }
-
 
 pub fn load(config: &Config) -> Vec<Entry> {
     // Only necessary when running on macOS, no-op on others
@@ -80,7 +74,6 @@ pub fn load(config: &Config) -> Vec<Entry> {
     }
 }
 
-
 fn load_backup(config: &Config) -> Vec<Entry> {
     if config.backup_path.exists() {
         fs::rename(&config.backup_path, &config.data_path).unwrap();
@@ -89,7 +82,6 @@ fn load_backup(config: &Config) -> Vec<Entry> {
         vec![]
     }
 }
-
 
 fn save_to(file: &fs::File, data: &[Entry]) -> io::Result<()> {
     let mut writer = io::BufWriter::new(file);
@@ -105,7 +97,6 @@ fn save_to(file: &fs::File, data: &[Entry]) -> io::Result<()> {
     Ok(())
 }
 
-
 fn maybe_create_data_dir(config: &Config) -> io::Result<()> {
     if !config.prefix.exists() {
         fs::create_dir_all(&config.prefix)
@@ -113,7 +104,6 @@ fn maybe_create_data_dir(config: &Config) -> io::Result<()> {
         Ok(())
     }
 }
-
 
 fn need_backup(config: &Config) -> io::Result<bool> {
     if config.backup_path.exists() {
@@ -137,7 +127,6 @@ fn need_backup(config: &Config) -> io::Result<bool> {
     }
 }
 
-
 fn maybe_backup(config: &Config) -> io::Result<()> {
     if need_backup(config)? {
         fs::copy(&config.data_path, &config.backup_path)?;
@@ -145,7 +134,6 @@ fn maybe_backup(config: &Config) -> io::Result<()> {
 
     Ok(())
 }
-
 
 pub fn save(config: &Config, data: &[Entry]) -> io::Result<()> {
     maybe_create_data_dir(config)?;
