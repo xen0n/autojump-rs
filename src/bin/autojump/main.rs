@@ -52,17 +52,20 @@ pub fn main() {
             .arg(
                 Arg::new("complete")
                     .long("complete")
+                    .action(ArgAction::SetTrue)
                     .help("used for tab completion"),
             )
             .arg(
                 Arg::new("purge")
                     .long("purge")
+                    .action(ArgAction::SetTrue)
                     .help("remove non-existent paths from database"),
             )
             .arg(
                 Arg::new("stat")
                     .short('s')
                     .long("stat")
+                    .action(ArgAction::SetTrue)
                     .help("show database entries and their key weights"),
             )
             .arg(
@@ -103,12 +106,12 @@ pub fn main() {
             arg_dir: app
                 .get_many::<String>("dir")
                 .map_or(vec![], |x| x.cloned().collect()),
-            flag_complete: app.contains_id("complete"),
-            flag_purge: app.contains_id("purge"),
+            flag_complete: app.get_flag("complete"),
+            flag_purge: app.get_flag("purge"),
             flag_add: app.get_one::<String>("add").cloned(),
             flag_increase,
             flag_decrease,
-            flag_stat: app.contains_id("stat"),
+            flag_stat: app.get_flag("stat"),
         }
     };
     let config = Config::defaults();
